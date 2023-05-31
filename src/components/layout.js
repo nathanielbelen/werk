@@ -7,7 +7,7 @@ export default function Layout({ children }) {
     <Box minHeight='100vh'>
       <Navbar />
       <main>{children}</main>
-      {/* <Footer /> */}
+      <Footer />
     </Box>
   );
 }

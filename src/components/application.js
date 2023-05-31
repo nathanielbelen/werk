@@ -48,7 +48,11 @@ export default function Application({ data: { company, position, location, subti
           </Text>
         </Box>
       </Grid>
-      <StatusText status={status} stage={stage} />
+      <Grid templateRows="auto 1fr" gap={1}>
+        <StatusText status={status} stage={stage} />
+        <StatusText status={status} stage={stage} />
+      </Grid>
+
     </Box>
     {isExpanded && <Box>{id}{cover_letter}{notes}{stage}</Box>}
   </Box></ListItem>)
