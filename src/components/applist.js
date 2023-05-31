@@ -1,4 +1,4 @@
-import { Box, List, ListItem, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, List, ListItem, Text, useColorModeValue, Center } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './application'
@@ -21,10 +21,13 @@ export default function AppList() {
 
   return (
     <>
+    <Center>
+      hi
+    </Center>
       <Box>
         <List size="xl" variant="custom" spacing={5}>
           {applications.map((app, idx) =>
-            <Application data={app} key={'application-no-' + idx}/>
+            <Application data={app} key={'application-no-' + idx} />
           )}
         </List>
       </Box>

@@ -67,7 +67,7 @@ export default function Navbar() {
                   </Center>
                   <MenuDivider />
                   <MenuItem>Account Settings</MenuItem>
-                  <MenuItem><button onClick={() => supabaseClient.auth.signOut()}>Sign out</button></MenuItem>
+                  <MenuItem><div onClick={() => supabaseClient.auth.signOut()}>Sign out</div></MenuItem>
                 </MenuList>
               </Menu>) : <Center><Link href='/login'>Sign in</Link></Center>}
             </Stack>
