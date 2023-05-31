@@ -16,7 +16,7 @@ const LoginPage = () => {
       <Center h='800px'>
         <Box w='500px'>
           <Auth
-            redirectTo="http://localhost:3000/"
+            redirectTo="/"
             supabaseClient={supabaseClient}
             appearance={{ theme: ThemeSupa }}
             socialLayout="horizontal"
