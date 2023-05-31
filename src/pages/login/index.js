@@ -9,9 +9,7 @@ const LoginPage = () => {
   const user = useUser()
   const router = useRouter();
 
-  if (user) {
-    router.push('/');
-  }
+  if (user) router.push('/');
 
   return (
     <Box>

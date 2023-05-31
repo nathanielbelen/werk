@@ -3,7 +3,6 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { useState } from 'react'
-import { useUser } from '@supabase/auth-helpers-react'
 import Layout from '../components/layout'
 
 export default function App({ Component, pageProps }) {
