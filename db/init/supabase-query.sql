@@ -26,6 +26,3 @@ CREATE TABLE IF NOT EXISTS applications (
   resume_number VARCHAR(120),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-INSERT INTO users (username, email, password)
-VALUES ('nathaniel', 'me@nathaniel.gg', 'asd');

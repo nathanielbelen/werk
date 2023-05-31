@@ -16,6 +16,8 @@ import {
   Center,
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+
 
 const NavLink = ({ children }) => (
   <Link
@@ -34,6 +36,8 @@ const NavLink = ({ children }) => (
 export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const supabaseClient = useSupabaseClient()
+  const user = useUser()
   return (
     <>
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
@@ -45,8 +49,7 @@ export default function Navbar() {
               <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
-
-              <Menu>
+              {(user) ? (<Menu>
                 <MenuButton
                   as={Button}
                   rounded={'full'}
@@ -64,9 +67,9 @@ export default function Navbar() {
                   </Center>
                   <MenuDivider />
                   <MenuItem>Account Settings</MenuItem>
-                  <MenuItem>Logout</MenuItem>
+                  <MenuItem><button onClick={() => supabaseClient.auth.signOut()}>Sign out</button></MenuItem>
                 </MenuList>
-              </Menu>
+              </Menu>) : <Center><a href='/login'>Sign in</a></Center>}
             </Stack>
           </Flex>
         </Flex>
