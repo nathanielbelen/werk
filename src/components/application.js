@@ -35,6 +35,7 @@ export default function Application({ data: { company, position, location, subti
         shadow="xs"
         width="100%"
         textAlign="left"
+        overflow="hidden"
       >
         <Box display="flex" alignItems="stretch">
           <Box
