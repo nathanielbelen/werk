@@ -29,7 +29,6 @@ export default function Navbar() {
         <Container maxW={'container.xl'}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <Box><Link as={NextLink} href={'/'}><Text as="b" fontSize="xl">werk</Text></Link></Box>
-
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>
               <Button onClick={toggleColorMode}>
