@@ -32,47 +32,47 @@ export default function Application({ data: { company, position, location, subti
         onClick={handleItemClick}
         borderRadius="lg"
         bg={useColorModeValue("gray.50", "blackAlpha.100")}
-        p={5}
         shadow="xs"
         width="100%"
         textAlign="left"
       >
-        <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Box display="flex" alignItems="stretch">
           <Box
             bg={statuses[status].color}
-            borderRadius="lg"
             width={12}
-            height={24}
-            marginRight={4}
           />
-          <Grid templateRows="auto 1fr" gap={1} flex="1">
-            <Box>
-              <Text fontSize="xl"><b>{company}</b></Text>
-              <Text as="span" fontSize="lg">{position}</Text>
-              {subtitle && <Text as="span" fontSize="xs" color="gray.400">({subtitle})</Text>}
-            </Box>
-            <Box>
-              <Text color="gray.400" fontSize="xs">
-                {location}
-              </Text>
-              <Text as="span" color="gray.400" fontSize="xs" noOfLines={1}>
-                {new Date(created_at).toLocaleString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                  day: '2-digit',
-                })}{' '}
-                <a href={url}>{url}</a>
-              </Text>
-            </Box>
-          </Grid>
-          <Grid templateRows="auto 1fr" gap={1}>
-            <StatusText status={status} stage={stage} />
-            <Chips stage={stage} cover_letter={cover_letter} resume_number={resume_number} />
-          </Grid>
+          <Flex justify="space-between" flex={1} my={5} mx={3}>
+            <Grid templateRows="auto 1fr" gap={1} flex="1">
+              <Box>
+                <Text fontSize="xl"><b>{company}</b></Text>
+                <Text as="span" fontSize="lg">{position}</Text>
+                {subtitle && <Text as="span" fontSize="xs" color="gray.400">({subtitle})</Text>}
+              </Box>
+              <Box>
+                <Text color="gray.400" fontSize="xs">
+                  {location}
+                </Text>
+                <Text as="span" color="gray.400" fontSize="xs" noOfLines={1}>
+                  {new Date(created_at).toLocaleString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                    day: '2-digit',
+                  })}{' '}
+                  <a href={url}>{url}</a>
+                </Text>
+              </Box>
+            </Grid>
+            <Flex flexDirection="column" justifyContent="center" gap={1}>
+              <StatusText status={status} stage={stage} />
+              <Chips stage={stage} cover_letter={cover_letter} resume_number={resume_number} />
+            </Flex>
+          </Flex>
+
         </Box>
         {isExpanded && <Box>{notes}</Box>}
-      </Box></ListItem>
+      </Box>
+    </ListItem>
   )
 }
 
