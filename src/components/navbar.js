@@ -1,4 +1,5 @@
 import {
+  Text,
   Box,
   Flex,
   Avatar,
@@ -9,7 +10,7 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
-  useDisclosure,
+  Container,
   useColorModeValue,
   Stack,
   useColorMode,
@@ -21,14 +22,13 @@ import NextLink from 'next/link'
 
 export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const supabaseClient = useSupabaseClient()
   const user = useUser()
   return (
-    <>
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+        <Container maxW={'container.xl'}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Box>werk</Box>
+          <Box><Link as={NextLink} href={'/'}><Text as="b" fontSize="xl">werk</Text></Link></Box>
 
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>
@@ -59,7 +59,7 @@ export default function Navbar() {
             </Stack>
           </Flex>
         </Flex>
+        </Container>
       </Box>
-    </>
   );
 }
