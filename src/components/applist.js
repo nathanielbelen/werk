@@ -1,4 +1,8 @@
-import { Box, List, Center, Heading } from '@chakra-ui/react';
+import { Box, List, Center, Heading, Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon, } from '@chakra-ui/react';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './application'
@@ -40,11 +44,11 @@ export default function AppList() {
       </Box>
 
       <Box>
-        <List size="xl" variant="custom" spacing={5}>
+        <Accordion allowMultiple size="xl" variant="custom" spacing={'5'}>
           {applications.map((app, idx) =>
             <Application data={app} key={'application-no-' + idx} />
           )}
-        </List>
+        </Accordion>
       </Box>
     </>
   )

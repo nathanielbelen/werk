@@ -1,11 +1,12 @@
 import { Flex, Box, Text, useColorModeValue } from '@chakra-ui/react'
 
-export default function Chips({ stage, cover_letter, resume_number }) {
+export default function Chips({ stage, cover_letter, resume_number, category }) {
   return (
     <Flex gap={1} justify="flex-end" >
       {stage > 0 && <Chip>round {stage}</Chip>}
       {cover_letter && <Chip>sent cover letter</Chip>}
-      <Chip>resume #{resume_number}</Chip>
+      <Chip>resume {resume_number}</Chip>
+      <Chip>#{category}</Chip>
     </Flex>
   )
 }
