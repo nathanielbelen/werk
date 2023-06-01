@@ -1,5 +1,6 @@
-import { Box, Grid, ListItem, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Grid, ListItem, Text, useColorModeValue, Flex } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
+import Chips from './chips';
 
 const stages = {
   0: { text: 'waiting on response' },
@@ -17,7 +18,7 @@ const statuses = {
   "1": { color: 'green.100', text: 'interviewing' }
 }
 
-export default function Application({ data: { company, position, location, subtitle, id, cover_letter, created_at, notes, stage, url, status } }) {
+export default function Application({ data: { company, position, location, subtitle, id, cover_letter, created_at, notes, stage, url, status, resume_number } }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleItemClick = () => {
@@ -50,16 +51,17 @@ export default function Application({ data: { company, position, location, subti
       </Grid>
       <Grid templateRows="auto 1fr" gap={1}>
         <StatusText status={status} stage={stage} />
-        <StatusText status={status} stage={stage} />
+        <Chips stage={stage} cover_letter={cover_letter} resume_number={resume_number} />
       </Grid>
 
     </Box>
-    {isExpanded && <Box>{id}{cover_letter}{notes}{stage}</Box>}
+    {isExpanded && <Box>{notes}</Box>}
   </Box></ListItem>)
 }
 
 function StatusText({ status, stage }) {
-  return (<Text color="gray.400" fontSize="xs" marginRight={4}>
+  return (<Flex justifyContent="flex-end"><Text color="gray.400" fontSize="xs">
     {status === 1 ? stages[stage].text : statuses[status].text}
-  </Text>)
+  </Text>
+  </Flex>)
 }

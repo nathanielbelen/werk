@@ -36,7 +36,7 @@ export default function AppList() {
   return (
     <><Box p={5}>
       <Center>
-        <Heading lineHeight="tall" align="center">showing <Highlight color='gray.100'>{applications.length}</Highlight> applications. <Highlight color='yellow.100'>{statusTally['0']}</Highlight> applications waiting on response, <Highlight color='red.100'>{statusTally['-1']}</Highlight> application rejections, and <Highlight color='green.100'>{statusTally['1']}</Highlight> applications in the interview stage.</Heading>
+        <Heading lineHeight="tall" align="center">showing <Highlight color='gray.100'>{applications.length}</Highlight> applications. <Highlight color='yellow.100'>{statusTally['0']}</Highlight> waiting on response, <Highlight color='red.100'>{statusTally['-1']}</Highlight> rejections, and <Highlight color='green.100'>{statusTally['1']}</Highlight> in the interview stage.</Heading>
       </Center>
     </Box>
 
