@@ -1,11 +1,14 @@
-import { Box, List, Center, Heading, Accordion,
+import {
+  Box, List, Center, Heading, Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon, } from '@chakra-ui/react';
+  AccordionIcon,
+} from '@chakra-ui/react';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './application'
+import { useRouter } from 'next/router';
 
 export default function AppList() {
   const user = useUser();
@@ -14,7 +17,8 @@ export default function AppList() {
 
   useEffect(() => {
     async function getApplications() {
-      const { data } = await supabaseClient.from('applications').select();
+      console.log(user)
+      const { data, error } = await supabaseClient.from('applications').select();
       setApplications(data)
     }
     getApplications();
@@ -39,7 +43,12 @@ export default function AppList() {
     <>
       <Box p={5}>
         <Center>
-          <Heading lineHeight="tall" align="center">showing <Highlight color='gray.100'>{applications.length}</Highlight> applications. <Highlight color='yellow.100'>{statusTally['0']}</Highlight> waiting on responses, <Highlight color='red.100'>{statusTally['-1']}</Highlight> rejections, and <Highlight color='green.100'>{statusTally['1']}</Highlight> in the interview stage.</Heading>
+          <Heading
+            fontWeight={600}
+            fontSize={{ base: 'xl', sm: '3xl', md: '5xl' }}
+            lineHeight={'110%'}
+            align="center"
+          >Showing <Highlight color='gray.100'>{applications.length}</Highlight> applications. <Highlight color='yellow.100'>{statusTally['0']}</Highlight> waiting on responses, <Highlight color='red.100'>{statusTally['-1']}</Highlight> rejections, and <Highlight color='green.100'>{statusTally['1']}</Highlight> in the interview stage.</Heading>
         </Center>
       </Box>
 

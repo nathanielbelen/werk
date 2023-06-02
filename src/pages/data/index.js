@@ -1,11 +1,8 @@
 import Head from 'next/head'
+import AppList from '../../components/applist';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
-import SettingsForm from '../../components/settingsform'
-import {
-  Container
-} from '@chakra-ui/react';
 
-export default function Settings() {
+export default function Data() {
   useAuthRedirect('/login');
   return (
     <>
@@ -16,9 +13,7 @@ export default function Settings() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Container maxW={'3xl'}>
-          <SettingsForm />
-        </Container>
+        data
       </main>
     </>
   )

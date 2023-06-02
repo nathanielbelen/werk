@@ -25,10 +25,14 @@ export default function Navbar() {
   const supabaseClient = useSupabaseClient()
   const user = useUser()
   return (
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-        <Container maxW={'container.xl'}>
+    <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Container maxW={'container.xl'}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Box><Link as={NextLink} href={'/'}><Text as="b" fontSize="xl">werk</Text></Link></Box>
+          <Box>
+            <Link as={NextLink} href={'/'}>
+              <Text as="b" fontWeight={500} fontSize="xx-large" letterSpacing="1px">werk</Text>
+            </Link>
+          </Box>
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>
               <Button onClick={toggleColorMode}>
@@ -58,7 +62,7 @@ export default function Navbar() {
             </Stack>
           </Flex>
         </Flex>
-        </Container>
-      </Box>
+      </Container>
+    </Box>
   );
 }
