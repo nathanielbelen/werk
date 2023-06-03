@@ -17,7 +17,7 @@ const useAuthRedirect = (redirectPath) => {
     }
   }, [isAuthChecked, router, user, redirectPath]);
 
-  return isAuthChecked;
+  return user;
 };
 
 export default useAuthRedirect;

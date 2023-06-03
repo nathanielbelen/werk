@@ -6,8 +6,8 @@ export default function Layout({ children }) {
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Navbar />
-      <Container maxW="container.xl" flexGrow={1}>
-        <main>{children}</main>
+      <Container as={"main"} maxW="container.xl" flexGrow={1}>
+        {children}
       </Container>
       <Footer />
     </Flex>

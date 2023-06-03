@@ -2,7 +2,7 @@ import Head from 'next/head'
 import useAuthRedirect from '@/hooks/useAuthRedirect';
 import SettingsForm from '../../components/settingsform'
 import {
-  Container
+  Container, Flex, Box
 } from '@chakra-ui/react';
 
 export default function Settings() {
@@ -15,11 +15,7 @@ export default function Settings() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <Container maxW={'3xl'}>
-          <SettingsForm />
-        </Container>
-      </main>
+      <SettingsForm />
     </>
   )
 }

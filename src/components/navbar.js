@@ -16,7 +16,7 @@ import {
   useColorMode,
   Center,
 } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { MoonIcon, SunIcon, SettingsIcon } from '@chakra-ui/icons';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import NextLink from 'next/link'
 
@@ -34,35 +34,22 @@ export default function Navbar() {
             </Link>
           </Box>
           <Flex alignItems={'center'}>
-            <Stack direction={'row'} spacing={7}>
+            <Stack direction={'row'} spacing={3}>
               <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
-              {(user) ? (<Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                  minW={0}>
-                  <Avatar
-                    size={'sm'}
-                    src={'https://avatars.dicebear.com/api/male/username.svg'}
-                  />
-                </MenuButton>
-                <MenuList alignItems={'center'}>
-                  <Center>
-                    <p>Username</p>
-                  </Center>
-                  <MenuDivider />
-                  <MenuItem>Account Settings</MenuItem>
-                  <MenuItem><div onClick={() => supabaseClient.auth.signOut()}>Sign out</div></MenuItem>
-                </MenuList>
-              </Menu>) : <Center><Link as={NextLink} href='/login'>Sign in</Link></Center>}
+              {user && <><Button as={NextLink} href={"/settings"}>
+                <SettingsIcon />
+              </Button><Button onClick={() => { supabaseClient.auth.signOut() }}>Sign out</Button></>
+              }
+              {!user && <Button as={NextLink} href={"/login"}>
+                Sign in
+              </Button>}
+
             </Stack>
           </Flex>
         </Flex>
-      </Container>
-    </Box>
+      </Container >
+    </Box >
   );
 }
