@@ -27,7 +27,7 @@ const LoginPage = () => {
             supabaseClient={supabaseClient}
             appearance={{ theme: ThemeSupa }}
             socialLayout="horizontal"
-            theme={colorMode === 'light' ? 'dark' : 'default'}
+            theme={colorMode === 'light' ? 'default' : 'dark'}
           />
         </Box>
       </Center>

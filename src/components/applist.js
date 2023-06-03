@@ -10,15 +10,16 @@ import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './application'
 import { useRouter } from 'next/router';
 
-export default function AppList() {
+export default function AppList({ userId }) {
   const user = useUser();
   const supabaseClient = useSupabaseClient();
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
     async function getApplications() {
-      console.log(user)
-      const { data, error } = await supabaseClient.from('applications').select();
+      let query = supabaseClient.from('applications').select()
+      if (userId) query = query.eq('user_id', userId);
+      const { data, error } = await query;
       setApplications(data)
     }
     getApplications();

@@ -89,7 +89,7 @@ export default function SettingsForm() {
         </FormControl>
         <FormControl display='flex' alignItems='center'>
           <FormLabel htmlFor='email-alerts' mt='5px'>
-            Expose applications to public?
+            Public profile
           </FormLabel>
           <Switch id='public' isChecked={publicBool} onChange={() => setPublicBool(!publicBool)} />
         </FormControl>
