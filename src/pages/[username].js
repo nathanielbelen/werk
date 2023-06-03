@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import AppList from '../components/applist';
+import { Spinner } from '@chakra-ui/react'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -29,7 +30,7 @@ export default function Username() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {userId ? <AppList userId={userId} /> : <p>Loading..</p>}
+        {userId ? <AppList userId={userId} /> : <Spinner />}
       </main>
     </>
   )
