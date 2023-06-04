@@ -4,26 +4,45 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Spinner, Flex
 } from '@chakra-ui/react';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './application'
 import { useRouter } from 'next/router';
+import { SpinnerIcon } from '@chakra-ui/icons';
 
 export default function AppList({ userId }) {
   const user = useUser();
   const supabaseClient = useSupabaseClient();
   const [applications, setApplications] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function getApplications() {
-      let query = supabaseClient.from('applications').select()
-      if (userId) query = query.eq('user_id', userId);
-      const { data, error } = await query;
-      setApplications(data)
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        let query = supabaseClient.from('applications').select();
+        if (userId) query = query.eq('user_id', userId);
+        const { data, error } = await query;
+
+        if (error) {
+          throw new Error('Failed to fetch applications');
+        }
+
+        setApplications(data);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setIsLoading(false);
+      }
     }
+
     getApplications();
-  }, [])
+  }, [user]);
 
   const statusTally = useMemo(() => {
     const statusCount = {
@@ -39,6 +58,14 @@ export default function AppList({ userId }) {
 
     return statusCount;
   }, [applications]);
+
+  if (isLoading) {
+    return <Flex flexGrow={1} alignItems='center' justifyContent='center'><Spinner /></Flex>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <>
