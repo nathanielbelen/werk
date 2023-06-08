@@ -3,8 +3,14 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon,
-  Spinner, Flex
+  AccordionIcon, Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton, Button,
+  Spinner, Flex, useDisclosure
 } from '@chakra-ui/react';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'

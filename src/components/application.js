@@ -3,8 +3,17 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon,
+  AccordionIcon, IconButton, Menu, Button,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider, Spinner
 } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState, useEffect } from 'react';
 import Chips from './chips';
 
@@ -25,6 +34,37 @@ const statuses = {
 }
 
 export default function Application({ data }) {
+
+  const [shouldLoad, setShouldLoad] = useState(false)
+  const [applicationData, setApplicationData] = useState(null);
+  const supabaseClient = useSupabaseClient();
+
+  useEffect(() => {
+    async function getApplicationData() {
+      // setIsLoading(true);
+      // setError(null);
+
+      try {
+        console.log(id)
+        let query = supabaseClient.from('application_changes').select().eq('application_id', id);
+        const { data, error } = await query;
+        console.log(data, error)
+        if (error) {
+          throw new Error('Failed to fetch application data');
+        }
+
+        console.log(data)
+
+        setApplicationData(data);
+      } catch (error) {
+        // setError(error);
+      } finally {
+        // setIsLoading(false);
+      }
+    }
+    if (shouldLoad) getApplicationData();
+  }, [shouldLoad]);
+
   const {
     company,
     position,
@@ -63,10 +103,11 @@ export default function Application({ data }) {
             bg: 'none',
           },
         }}
+        onClick={() => { setShouldLoad(true) }}
       >
         <Box display="flex" w={"100%"} alignItems="stretch">
           <Box bg={statuses[status].color} width={12} />
-          <Flex justify="space-between" flex={1} my={5} mx={3}>
+          <Flex justify="space-between" flex={1} my={5} mx={3} gap={3}>
             <Flex direction="column" align="start" gap={1} flex="1">
               <Box align="start">
                 <Text fontSize="xl">
@@ -107,10 +148,24 @@ export default function Application({ data }) {
                 category={category}
               />
             </Flex>
+            <AccordionIcon alignSelf={'center'}/>
           </Flex>
         </Box>
       </AccordionButton>
       <AccordionPanel pb={4}>
+        <Flex h={'300px'} flexDirection='column'>
+          <Box flexGrow={1}>
+            <AccordionContent />
+          </Box>
+          <Menu>
+            <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
+            <MenuList>
+              <MenuItem>Edit</MenuItem>
+              <MenuItem>Delete</MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+
         {notes}
       </AccordionPanel>
     </AccordionItem>
@@ -125,4 +180,16 @@ function StatusText({ status, stage }) {
       </Text>
     </Flex>
   )
+}
+
+function AccordionContent({isLoading, error}) {
+    if (isLoading) {
+      return <Flex flexGrow={1} alignItems='center' justifyContent='center'><Spinner /></Flex>;
+    }
+
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    }
+
+
 }
