@@ -10,7 +10,7 @@ import {
   MenuItemOption,
   MenuGroup,
   MenuOptionGroup,
-  MenuDivider,
+  MenuDivider, Spinner
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
