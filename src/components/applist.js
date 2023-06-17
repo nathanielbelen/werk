@@ -15,6 +15,8 @@ import {
 import { useState, useEffect, useMemo } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './application'
+import AddApplication from './addapplication'
+import ContentBox from './contentbox';
 import { useRouter } from 'next/router';
 import { SpinnerIcon } from '@chakra-ui/icons';
 
@@ -74,8 +76,8 @@ export default function AppList({ userId }) {
   }
 
   return (
-    <>
-      <Box p={5}>
+    <ContentBox heading={'Applications'}>
+      <Box pb={'5'}>
         <Center>
           <Heading
             fontWeight={600}
@@ -87,13 +89,14 @@ export default function AppList({ userId }) {
       </Box>
 
       <Box>
+        <AddApplication />
         <Accordion allowMultiple size="xl" variant="custom" spacing={'5'}>
           {applications.map((app, idx) =>
             <Application data={app} key={'application-no-' + idx} />
           )}
         </Accordion>
       </Box>
-    </>
+    </ContentBox>
   )
 }
 

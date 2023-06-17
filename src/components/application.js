@@ -16,6 +16,8 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState, useEffect } from 'react';
 import Chips from './chips';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 const stages = {
   0: { text: 'waiting on response' },
@@ -156,6 +158,7 @@ export default function Application({ data }) {
         <Flex h={'300px'} flexDirection='column'>
           <Box flexGrow={1}>
             <AccordionContent />
+            hey
           </Box>
           <Menu>
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
@@ -183,6 +186,8 @@ function StatusText({ status, stage }) {
 }
 
 function AccordionContent({isLoading, error}) {
+  return <Note text={'# Marked in browser\n\nRendered by **marked**.'}/>
+
     if (isLoading) {
       return <Flex flexGrow={1} alignItems='center' justifyContent='center'><Spinner /></Flex>;
     }
@@ -191,5 +196,11 @@ function AccordionContent({isLoading, error}) {
       return <div>Error: {error.message}</div>;
     }
 
-
 }
+
+const Note = ({ text }) => {
+  const parsedHTML = marked.parse(text);
+  const sanitizedHTML = DOMPurify.sanitize(parsedHTML);
+
+  return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;
+};
