@@ -1,23 +1,15 @@
 import {
-  Box, Grid, ListItem, Text, useColorModeValue, Flex, Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon, IconButton, Menu, Button,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider, Spinner, FormControl, FormLabel, Input, Select, Checkbox, Textarea
+  Box,
+  Flex,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  Checkbox,
+  Textarea
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useState, useEffect } from 'react';
-import Chips from './chips';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
+import { useState } from 'react';
 import { SmallAddIcon } from '@chakra-ui/icons'
 
 export default function AddApplication() {
@@ -49,7 +41,6 @@ export default function AddApplication() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Perform form submission logic here
     console.log(formData);
   };
 
