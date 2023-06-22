@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  Progress,
   Box,
   ButtonGroup,
   Button,
@@ -8,17 +7,9 @@ import {
   Center,
   Flex,
   FormControl,
-  GridItem,
   FormLabel,
   Input,
   Switch,
-  Select,
-  SimpleGrid,
-  InputLeftAddon,
-  InputGroup,
-  Textarea,
-  FormHelperText,
-  InputRightElement,
   FormErrorMessage,
   Text
 } from '@chakra-ui/react';
@@ -105,7 +96,6 @@ export default function SettingsForm() {
           </Flex>
         </ButtonGroup>
       </Box>
-
     </>
   );
 }
