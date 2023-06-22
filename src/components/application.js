@@ -1,16 +1,16 @@
 import {
-  Box, Grid, ListItem, Text, useColorModeValue, Flex, Accordion,
+  Box,
+  Text,
+  useColorModeValue,
+  Flex,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon, IconButton, Menu, Button,
+  AccordionIcon, Menu, Button,
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider, Spinner
+  Spinner
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -150,7 +150,7 @@ export default function Application({ data }) {
                 category={category}
               />
             </Flex>
-            <AccordionIcon alignSelf={'center'}/>
+            <AccordionIcon alignSelf={'center'} />
           </Flex>
         </Box>
       </AccordionButton>
@@ -185,16 +185,16 @@ function StatusText({ status, stage }) {
   )
 }
 
-function AccordionContent({isLoading, error}) {
-  return <Note text={'# Marked in browser\n\nRendered by **marked**.'}/>
+function AccordionContent({ isLoading, error }) {
+  return <Note text={'# Marked in browser\n\nRendered by **marked**.'} />
 
-    if (isLoading) {
-      return <Flex flexGrow={1} alignItems='center' justifyContent='center'><Spinner /></Flex>;
-    }
+  if (isLoading) {
+    return <Flex flexGrow={1} alignItems='center' justifyContent='center'><Spinner /></Flex>;
+  }
 
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    }
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
 }
 
