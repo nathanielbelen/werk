@@ -35,7 +35,7 @@ const statuses = {
   '1': { color: 'green.100', text: 'interviewing' }
 }
 
-export default function Application({ data }) {
+export default function Application({ data, isUser, onOpen }) {
 
   const [shouldLoad, setShouldLoad] = useState(false)
   const [applicationData, setApplicationData] = useState(null);
@@ -160,13 +160,13 @@ export default function Application({ data }) {
             <AccordionContent />
             hey
           </Box>
-          <Menu>
+          {isUser && <Menu>
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
             <MenuList>
               <MenuItem>Edit</MenuItem>
-              <MenuItem>Delete</MenuItem>
+              <MenuItem onClick={onOpen}>Delete</MenuItem>
             </MenuList>
-          </Menu>
+          </Menu>}
         </Flex>
 
         {notes}
@@ -199,7 +199,7 @@ function AccordionContent({ isLoading, error }) {
 }
 
 const Note = ({ text }) => {
-  const parsedHTML = marked.parse(text, {mangle: false, headerIds: false});
+  const parsedHTML = marked.parse(text, { mangle: false, headerIds: false });
   const sanitizedHTML = DOMPurify.sanitize(parsedHTML);
 
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;

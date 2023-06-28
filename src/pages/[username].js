@@ -12,12 +12,14 @@ export default function Username() {
   const { username } = router.query;
 
   const [userId, setUserId] = useState(null)
+  const [isUser, setIsUser] = useState(false);
 
   useEffect(() => {
     async function getUserId() {
       let query = supabaseClient.from('user_details').select().eq('username', username)
       const { data, error } = await query;
       setUserId(data[0].user_id);
+      setIsUser(user?.id === data[0]?.user_id)
     }
     if (username) getUserId();
   }, [username])
@@ -30,7 +32,7 @@ export default function Username() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      {userId ? <AppList userId={userId} user={user} /> : <Spinner />}
+      {userId ? <AppList userId={userId} isUser={isUser} /> : <Spinner />}
     </>
   )
 }

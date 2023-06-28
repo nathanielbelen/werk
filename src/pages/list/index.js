@@ -4,6 +4,7 @@ import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 export default function List() {
   const { user } = useAuthRedirect('/login');
+  console.log(user, 'HELLO')
   return (
     <>
       <Head>
