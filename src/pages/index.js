@@ -43,7 +43,7 @@ function HeroSection() {
       >
         <Button
           as={NextLink}
-          href={"/list"}
+          href={'/list'}
           colorScheme={'green'}
           bg={'green.400'}
           rounded={'full'}

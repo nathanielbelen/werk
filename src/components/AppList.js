@@ -5,7 +5,7 @@ import {
 import { useState, useEffect, useMemo } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './Application'
-import AddApplication from './AddApplication'
+import AddApplication from '@/pages/list/components/AddApplication'
 import ContentBox from '@/components/ContentBox';
 
 export default function AppList({ userId }) {
@@ -71,14 +71,14 @@ export default function AppList({ userId }) {
             fontWeight={600}
             fontSize={{ base: 'xl', sm: '3xl', md: '5xl' }}
             lineHeight={'110%'}
-            align="center"
+            align='center'
           >Showing <Highlight color='gray.100'>{Applications.length}</Highlight> Applications. <Highlight color='yellow.100'>{statusTally['0']}</Highlight> waiting on responses, <Highlight color='red.100'>{statusTally['-1']}</Highlight> rejections, and <Highlight color='green.100'>{statusTally['1']}</Highlight> in the interview stage.</Heading>
         </Center>
       </Box>
 
       <Box>
         <AddApplication />
-        <Accordion allowMultiple size="xl" variant="custom" spacing={'5'}>
+        <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>
           {Applications.map((app, idx) =>
             <Application data={app} key={'Application-no-' + idx} />
           )}
@@ -90,13 +90,13 @@ export default function AppList({ userId }) {
 
 function Highlight({ color, children }) {
   return (
-    <Box as="span"
-      px="2"
-      py="0"
-      rounded="xl"
+    <Box as='span'
+      px='2'
+      py='0'
+      rounded='xl'
       bg={color}
       color='black'
-      display="inline-block">
+      display='inline-block'>
       {children}
     </Box>
   )

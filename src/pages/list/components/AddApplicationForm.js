@@ -14,23 +14,23 @@ import { useEffect, useState } from 'react';
 
 export default function AddApplicationForm({ handleStop }) {
   const [formData, setFormData] = useState({
-    company: "",
-    position: "",
-    url: "",
-    subtitle: "",
-    notes: "",
+    company: '',
+    position: '',
+    url: '',
+    subtitle: '',
+    notes: '',
     cover_letter: false,
-    resume_number: "",
-    location: "",
-    stage: "",
-    status: "",
-    category: ""
+    resume_number: '',
+    location: '',
+    stage: '',
+    status: '',
+    category: ''
   });
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
   const handleSubmit = (e) => {
@@ -43,8 +43,8 @@ export default function AddApplicationForm({ handleStop }) {
   };
   return (
     <form onSubmit={handleSubmit}>
-      <ControlledInput label='Company' name='company' {...commonProps} />
-      <ControlledInput label='Position' name='position' {...commonProps} />
+      <ControlledInput label='Company' name='company' {...commonProps} isRequired />
+      <ControlledInput label='Position' name='position' {...commonProps} isRequired />
       <ControlledInput label='URL' name='url' {...commonProps} />
       <ControlledInput label='Subtitle' name='subtitle' {...commonProps} />
       <ControlledTextarea label='Notes' name='notes' {...commonProps} />
@@ -71,16 +71,16 @@ export default function AddApplicationForm({ handleStop }) {
         {...commonProps} />
       <ControlledInput label='Category' name='category' {...commonProps} />
       <Flex justifyContent={'center'} gap={'2'}>
-        <Button type="submit" variant='solid'>Submit</Button>
+        <Button type='submit' variant='solid'>Submit</Button>
         <Button variant='outline' onClick={handleStop}>Cancel</Button>
       </Flex>
     </form>
   )
 }
 
-const LabelledFormControl = ({ label, children }) => {
+const LabelledFormControl = ({ label, children, isRequired }) => {
   return (
-    <FormControl>
+    <FormControl isRequired={isRequired}>
       <FormLabel>{label}</FormLabel>
       {children}
     </FormControl>
@@ -99,9 +99,9 @@ const ControlledSelect = ({ label, name, options, formData, onChange }) => {
   )
 }
 
-const ControlledInput = ({ label, name, onChange, formData }) => {
+const ControlledInput = ({ label, name, onChange, formData, isRequired }) => {
   return (
-    <LabelledFormControl label={label}>
+    <LabelledFormControl label={label} isRequired={isRequired}>
       <Input name={name} value={formData[name]} onChange={onChange} />
     </LabelledFormControl>
   )

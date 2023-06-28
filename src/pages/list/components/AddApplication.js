@@ -11,8 +11,9 @@ import { SmallAddIcon } from '@chakra-ui/icons'
 export default function AddApplication() {
   // company, position, url, subtitle, notes, cover_letter, resume_number, location, stage, status, category
   const [adding, setAdding] = useState(false);
-  const responsiveBg = useColorModeValue("gray.50", "blackAlpha.100")
+  const responsiveBg = useColorModeValue('gray.50', 'blackAlpha.100')
   const responsiveColor = useColorModeValue('gray.800', 'white')
+  const responsiveBorderColor = useColorModeValue('gray.200', 'white.300')
   const handleStop = () => {
     setAdding(false);
   }
@@ -20,14 +21,14 @@ export default function AddApplication() {
   if (adding) {
     return (
       <Flex
-        borderRadius="lg"
-        minHeight="100px"
+        borderRadius='lg'
+        minHeight='100px'
         flexDirection={'column'}
         shadow='xs'
-        borderStyle="solid"
-        borderColor='black'
+        borderStyle='solid'
+        borderColor={responsiveBorderColor}
         borderWidth='1px'
-        marginBottom="4"
+        marginBottom='4'
         alignItems={'center'}
         justifyContent={'center'}
         bg={responsiveBg}
@@ -43,12 +44,12 @@ export default function AddApplication() {
   return (<Flex
     as={Button}
     flexDirection={'column'}
-    borderRadius="lg"
-    width="100%"
-    minHeight="100px"
+    borderRadius='lg'
+    width='100%'
+    minHeight='100px'
     shadow='xs'
-    borderStyle="none"
-    marginBottom="4"
+    borderStyle='none'
+    marginBottom='4'
     alignItems={'center'}
     justifyContent={'center'}
     onClick={() => { setAdding(true); }}

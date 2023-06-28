@@ -15,19 +15,19 @@ import NextLink from 'next/link'
 
 function NavigationLinks() {
   return (
-    <Stack direction="row" spacing={3} alignItems={'center'}>
-      <Link as={NextLink} href="/">
-        <Text as="b" fontWeight={500} fontSize="xx-large" letterSpacing="1px">
+    <Stack direction='row' spacing={3} alignItems={'center'}>
+      <Link as={NextLink} href='/'>
+        <Text as='b' fontWeight={500} fontSize='xx-large' letterSpacing='1px'>
           werk
         </Text>
       </Link>
-      <Link as={NextLink} href="/list">
-        <Text fontWeight={300} fontSize="large" letterSpacing="1px">
+      <Link as={NextLink} href='/list'>
+        <Text fontWeight={300} fontSize='large' letterSpacing='1px'>
           List
         </Text>
       </Link>
-      <Link as={NextLink} href="/data">
-        <Text fontWeight={300} fontSize="large" letterSpacing="1px">
+      <Link as={NextLink} href='/data'>
+        <Text fontWeight={300} fontSize='large' letterSpacing='1px'>
           Data
         </Text>
       </Link>
@@ -44,7 +44,7 @@ export default function Navbar() {
     if (user) {
       return (
         <>
-          <Button as={NextLink} href="/settings">
+          <Button as={NextLink} href='/settings'>
             <SettingsIcon />
           </Button>
           <Button onClick={() => supabase.auth.signOut()}>Sign out</Button>
@@ -52,7 +52,7 @@ export default function Navbar() {
       );
     } else {
       return (
-        <Button as={NextLink} href="/login">
+        <Button as={NextLink} href='/login'>
           Sign in
         </Button>
       );
@@ -61,13 +61,13 @@ export default function Navbar() {
 
   return (
     <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-      <Container maxW="container.xl">
-        <Flex h={16} alignItems="center" justifyContent="space-between">
-          <Flex gap={3} alignItems="center">
+      <Container maxW='container.xl'>
+        <Flex h={16} alignItems='center' justifyContent='space-between'>
+          <Flex gap={3} alignItems='center'>
             <NavigationLinks />
           </Flex>
-          <Flex alignItems="center">
-            <Stack direction="row" spacing={3}>
+          <Flex alignItems='center'>
+            <Stack direction='row' spacing={3}>
               <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
