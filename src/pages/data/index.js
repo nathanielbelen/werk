@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import AppList from '../../components/applist';
+import AppList from '../../components/AppList';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 export default function Data() {

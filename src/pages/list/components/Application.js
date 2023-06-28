@@ -15,7 +15,7 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState, useEffect } from 'react';
-import Chips from './chips';
+import Chips from '@/components/Chips';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -199,7 +199,7 @@ function AccordionContent({ isLoading, error }) {
 }
 
 const Note = ({ text }) => {
-  const parsedHTML = marked.parse(text);
+  const parsedHTML = marked.parse(text, {mangle: false, headerIds: false});
   const sanitizedHTML = DOMPurify.sanitize(parsedHTML);
 
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;

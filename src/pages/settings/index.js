@@ -1,9 +1,6 @@
 import Head from 'next/head'
 import useAuthRedirect from '@/hooks/useAuthRedirect';
-import SettingsForm from '../../components/settingsform'
-import {
-  Container, Flex, Box
-} from '@chakra-ui/react';
+import SettingsForm from './components/SettingsForm'
 
 export default function Settings() {
   useAuthRedirect('/login');

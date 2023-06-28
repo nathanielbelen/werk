@@ -1,5 +1,5 @@
-import Navbar from "./navbar";
-import Footer from "./footer";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 import { Container, Flex, useColorModeValue } from '@chakra-ui/react';
 
 export default function Layout({ children }) {

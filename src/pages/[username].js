@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import AppList from '../components/applist';
+import AppList from '../components/AppList';
 import { Spinner } from '@chakra-ui/react'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/router';
