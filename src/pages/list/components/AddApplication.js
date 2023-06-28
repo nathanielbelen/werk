@@ -24,7 +24,9 @@ export default function AddApplication() {
         minHeight="100px"
         flexDirection={'column'}
         shadow='xs'
-        borderStyle="none"
+        borderStyle="solid"
+        borderColor='black'
+        borderWidth='1px'
         marginBottom="4"
         alignItems={'center'}
         justifyContent={'center'}
