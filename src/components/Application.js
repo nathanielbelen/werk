@@ -15,7 +15,7 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState, useEffect } from 'react';
-import Chips from './chips';
+import Chips from '@/components/Chips';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -29,10 +29,10 @@ const stages = {
 }
 
 const statuses = {
-  "-2": { color: 'gray.100', text: 'assumed rejected' },
-  "-1": { color: 'gray.100', text: 'rejected' },
-  "0": { color: 'yellow.100', text: 'waiting on response' },
-  "1": { color: 'green.100', text: 'interviewing' }
+  '-2': { color: 'gray.100', text: 'assumed rejected' },
+  '-1': { color: 'gray.100', text: 'rejected' },
+  '0': { color: 'yellow.100', text: 'waiting on response' },
+  '1': { color: 'green.100', text: 'interviewing' }
 }
 
 export default function Application({ data }) {
@@ -90,14 +90,14 @@ export default function Application({ data }) {
 
   return (
     <AccordionItem
-      borderRadius="lg"
-      bg={useColorModeValue("gray.50", "blackAlpha.100")}
-      width="100%"
-      textAlign="left"
-      overflow="hidden"
+      borderRadius='lg'
+      bg={useColorModeValue('gray.50', 'blackAlpha.100')}
+      width='100%'
+      textAlign='left'
+      overflow='hidden'
       shadow='xs'
-      borderStyle="none"
-      marginBottom="4"
+      borderStyle='none'
+      marginBottom='4'
     >
       <AccordionButton p={0}
         sx={{
@@ -107,27 +107,27 @@ export default function Application({ data }) {
         }}
         onClick={() => { setShouldLoad(true) }}
       >
-        <Box display="flex" w={"100%"} alignItems="stretch">
+        <Box display='flex' w={'100%'} alignItems='stretch'>
           <Box bg={statuses[status].color} width={12} />
-          <Flex justify="space-between" flex={1} my={5} mx={3} gap={3}>
-            <Flex direction="column" align="start" gap={1} flex="1">
-              <Box align="start">
-                <Text fontSize="xl">
+          <Flex justify='space-between' flex={1} my={5} mx={3} gap={3}>
+            <Flex direction='column' align='start' gap={1} flex='1'>
+              <Box align='start'>
+                <Text fontSize='xl'>
                   <b>{company}</b>
                 </Text>
-                <Text as="span" fontSize="lg">
+                <Text as='span' fontSize='lg'>
                   {position}
                 </Text>
-                {subtitle && <Text as="span" fontSize="xs" color="gray.400">({subtitle})</Text>}
+                {subtitle && <Text as='span' fontSize='xs' color='gray.400'>({subtitle})</Text>}
               </Box>
-              <Box align="start">
-                <Text color="gray.400" fontSize="xs">
+              <Box align='start'>
+                <Text color='gray.400' fontSize='xs'>
                   {location}
                 </Text>
                 <Text
-                  as="span"
-                  color="gray.400"
-                  fontSize="xs"
+                  as='span'
+                  color='gray.400'
+                  fontSize='xs'
                   noOfLines={1}
                 >
                   {new Date(created_at).toLocaleString('en-US', {
@@ -141,7 +141,7 @@ export default function Application({ data }) {
                 </Text>
               </Box>
             </Flex>
-            <Flex flexDirection="column" justifyContent="center" gap={1}>
+            <Flex flexDirection='column' justifyContent='center' gap={1}>
               <StatusText status={status} stage={stage} />
               <Chips
                 stage={stage}
@@ -177,8 +177,8 @@ export default function Application({ data }) {
 
 function StatusText({ status, stage }) {
   return (
-    <Flex justifyContent="flex-end">
-      <Text color="gray.400" fontSize="xs">
+    <Flex justifyContent='flex-end'>
+      <Text color='gray.400' fontSize='xs'>
         {status === 1 ? stages[stage].text : statuses[status].text}
       </Text>
     </Flex>
@@ -199,7 +199,7 @@ function AccordionContent({ isLoading, error }) {
 }
 
 const Note = ({ text }) => {
-  const parsedHTML = marked.parse(text);
+  const parsedHTML = marked.parse(text, {mangle: false, headerIds: false});
   const sanitizedHTML = DOMPurify.sanitize(parsedHTML);
 
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;

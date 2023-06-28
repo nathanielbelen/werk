@@ -58,23 +58,23 @@ export default function SettingsForm() {
   return (
     <>
       <Box
-        borderWidth="1px"
-        rounded="lg"
-        shadow="1px 1px 3px rgba(0,0,0,0.3)"
+        borderWidth='1px'
+        rounded='lg'
+        shadow='1px 1px 3px rgba(0,0,0,0.3)'
         p={6}
-        m="30px auto"
-        as="form"
-        minW="430px"
-        maxW="615px"
+        m='30px auto'
+        as='form'
+        minW='430px'
+        maxW='615px'
         onSubmit={handleSubmit}
         flexGrow={0}>
-        <Heading textAlign={'center'} fontWeight="normal" mb="2%">
+        <Heading textAlign={'center'} fontWeight='normal' mb='2%'>
           User Settings
         </Heading>
         <FormControl isInvalid={isError}>
-          <Flex align="center" mb={"-5px"}>
+          <Flex align='center' mb={'-5px'}>
             <Box pr={2}><Text whiteSpace={'nowrap'}>http://werk-5-app.vercel.app/</Text></Box>
-            <Input id="user-url" placeholder="URL" value={URL} onChange={(e) => { setURL(e.target.value) }} />
+            <Input id='user-url' placeholder='URL' value={URL} onChange={(e) => { setURL(e.target.value) }} />
           </Flex>
           <Center><FormErrorMessage>URL is required.</FormErrorMessage></Center>
         </FormControl>
@@ -84,13 +84,13 @@ export default function SettingsForm() {
           </FormLabel>
           <Switch id='public' isChecked={publicBool} onChange={() => setPublicBool(!publicBool)} />
         </FormControl>
-        <ButtonGroup mt="2%" w="100%">
-          <Flex w="100%" justifyContent="center" align="center">
+        <ButtonGroup mt='2%' w='100%'>
+          <Flex w='100%' justifyContent='center' align='center'>
             <Button
-              w="7rem"
-              type="submit"
-              colorScheme="teal"
-              variant="outline">
+              w='7rem'
+              type='submit'
+              colorScheme='teal'
+              variant='outline'>
               Save
             </Button>
           </Flex>

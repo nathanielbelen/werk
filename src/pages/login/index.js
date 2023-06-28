@@ -16,17 +16,17 @@ const LoginPage = () => {
     <Box>
       <Center h='800px'>
         <Box
-          w="500px"
-          mx="auto"
+          w='500px'
+          mx='auto'
           p={4}
-          rounded="md"
-          boxShadow="md"
+          rounded='md'
+          boxShadow='md'
         >
           <Auth
-            redirectTo="/"
+            redirectTo='/'
             supabaseClient={supabaseClient}
             appearance={{ theme: ThemeSupa }}
-            socialLayout="horizontal"
+            socialLayout='horizontal'
             theme={colorMode === 'light' ? 'default' : 'dark'}
           />
         </Box>
