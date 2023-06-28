@@ -5,14 +5,14 @@ import {
 import { useState, useEffect, useMemo } from 'react';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './Application'
-import AddApplication from '@/pages/list/components/AddApplication'
-import ContentBox from '@/components/ContentBox';
+import AddApplication from './AddApplication'
+import ContentBox from './ContentBox';
 
-export default function AppList({ userId }) {
-  const user = useUser();
+export default function AppList({ userId, user }) {
+  const isUser = userId === user?.id;
   const supabaseClient = useSupabaseClient();
   const [Applications, setApplications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function AppList({ userId }) {
     }
 
     getApplications();
-  }, [user]);
+  }, []);
 
   const statusTally = useMemo(() => {
     const statusCount = {
@@ -77,7 +77,7 @@ export default function AppList({ userId }) {
       </Box>
 
       <Box>
-        <AddApplication />
+        {isUser && <AddApplication />}
         <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>
           {Applications.map((app, idx) =>
             <Application data={app} key={'Application-no-' + idx} />
