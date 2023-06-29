@@ -18,6 +18,8 @@ import { useState, useEffect } from 'react';
 import Chips from '@/components/Chips';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import ContentBox from './ContentBox';
+import AddApplicationForm from './AddApplicationForm';
 
 const stages = {
   0: { text: 'waiting on response' },
@@ -36,8 +38,9 @@ const statuses = {
 }
 
 export default function Application({ data, isUser, onOpen, setAppIdRef }) {
-  const [shouldLoad, setShouldLoad] = useState(false)
+  const [shouldLoad, setShouldLoad] = useState(false);
   const [applicationData, setApplicationData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
   const supabaseClient = useSupabaseClient();
 
   const handleAppDeleteClick = () => {
@@ -56,7 +59,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
         if (error) {
           throw new Error('Failed to fetch application data');
         }
-
+        console.log(data)
         setApplicationData(data);
       } catch (error) {
         // setError(error);
@@ -155,21 +158,20 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
         </Box>
       </AccordionButton>
       <AccordionPanel pb={4}>
-        <Flex h={'300px'} flexDirection='column'>
-          <Box flexGrow={1}>
-            <AccordionContent />
-            hey
-          </Box>
+        {!editMode && <Flex h={'300px'} flexDirection='column'>
+          <Flex flexGrow={1} mb={2}>
+            <ContentBox flexGrow={1} heading='History' headingSize={'xs'}>Box 1</ContentBox>
+            <ContentBox flexGrow={1} heading='Notes' headingSize={'xs'}>{notes}</ContentBox>
+          </Flex>
           {isUser && <Menu>
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
             <MenuList>
-              <MenuItem>Edit</MenuItem>
+              <MenuItem onClick={() => { setEditMode(!editMode) }}>Edit</MenuItem>
               <MenuItem onClick={handleAppDeleteClick}>Delete</MenuItem>
             </MenuList>
           </Menu>}
-        </Flex>
-
-        {notes}
+        </Flex>}
+        {editMode && <AddApplicationForm />}
       </AccordionPanel>
     </AccordionItem>
   )
