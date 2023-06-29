@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Button,
   FormControl,
@@ -8,20 +7,11 @@ import {
   Select,
   Checkbox,
   Textarea,
-  useColorModeValue, Spinner, Heading,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription, useToast
+  Spinner,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useState } from 'react';
 
-export default function AddApplicationForm({ handleStop, application, addApp }) {
-  const user = useUser();
-  const supabaseClient = useSupabaseClient();
-  const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+export default function ApplicationForm({ application, submit, cancel }) {
   const [formData, setFormData] = useState({
     company: application?.company ?? '',
     position: application?.position ?? '',
@@ -36,23 +26,6 @@ export default function AddApplicationForm({ handleStop, application, addApp }) 
     category: application?.category ?? ''
   });
 
-  const showStatusResult = (status) => {
-    let message = '';
-
-    if (status === 'error') {
-      message = 'Unable to add application.';
-    } else if (status === 'success') {
-      message = 'Successfully added application!';
-    }
-
-    toast({
-      title: message,
-      status,
-      isClosable: true,
-      duration: 5000,
-    });
-  };
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevState) => ({
@@ -60,24 +33,13 @@ export default function AddApplicationForm({ handleStop, application, addApp }) 
       [name]: type === 'checkbox' ? checked : value
     }));
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    async function submitApplication() {
-      setIsLoading(true);
-      const { data, error } = await supabaseClient
-        .from('applications')
-        .insert({ user_id: user.id, ...formData }).select()
-      setIsLoading(false);
-      if (error) {
-        showStatusResult('error')
-      } else {
-        addApp(data[0]);
-        showStatusResult('success')
-        handleStop();
-      }
-    }
-    submitApplication()
-  };
+    submit(formData)
+  }
+
+
   const commonProps = {
     formData,
     onChange: handleChange
@@ -118,12 +80,11 @@ export default function AddApplicationForm({ handleStop, application, addApp }) 
           {...commonProps} />
         <ControlledFormField type='input' label='Category' name='category' {...commonProps} />
         <Flex justifyContent={'center'} gap={'2'}>
-          <Button variant='outline' onClick={handleStop}>Cancel</Button>
+          <Button variant='outline' onClick={cancel}>Cancel</Button>
           <Button type='submit' variant='solid'>Submit</Button>
         </Flex>
       </form>
       <Flex flexGrow={1} alignItems='center' justifyContent='center'></Flex>
-      {isLoading && <Spinner />}
     </>
   )
 }
