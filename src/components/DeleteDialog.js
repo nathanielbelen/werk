@@ -27,7 +27,7 @@ function DeleteDialog({ isOpen, cancelRef, onClose, deleteApp }) {
         </AlertDialogHeader>
 
         <AlertDialogBody>
-          Are you sure you want to delete this application? You can't undo this action afterwards.
+          {"Are you sure you want to delete this application? You can't undo this action afterwards."}
         </AlertDialogBody>
         <AlertDialogFooter>
           <Button ref={cancelRef} onClick={onClose}>
