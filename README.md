@@ -10,6 +10,7 @@ Werk is a web application that allows users to record and manage their job appli
 ## Setup and Installation
 
 ## Database Setup
+The Job Application Tracker utilizes a PostgreSQL database through Supabase. The database has been configured to enable comprehensive tracking of application changes and enforce data access controls.
 
 ### Application Changes Tracking
 To track changes made to job applications, a trigger was implemented in the applications table. This trigger detects modifications to the status or stage columns within a row and executes a function that captures the timestamp, application details, and the old and new values of the modified columns. This information is then stored in the applications_changes table, facilitating the rendering of a concise application history on the front end.
