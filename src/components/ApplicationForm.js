@@ -9,7 +9,7 @@ import {
   Textarea,
   Spinner,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ApplicationForm({ application, submit, cancel }) {
   const [formData, setFormData] = useState({

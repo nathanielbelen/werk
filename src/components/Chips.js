@@ -1,27 +1,28 @@
-import { Flex, Box, Text, useColorModeValue } from '@chakra-ui/react'
+import { Flex, Box, Text, Badge, useColorModeValue } from '@chakra-ui/react'
 
-export default function Chips({ stage, cover_letter, resume_number, category }) {
+const stages = {
+  0: { text: 'waiting on response' },
+  1: { text: 'phone screen' },
+  2: { text: 'round 1 interview' },
+  3: { text: 'round 2 interview' },
+  4: { text: 'round 3 interview' },
+  5: { text: 'round 4 interview' }
+}
+
+export default function Chips({ application: { cover_letter, public: isPublic, resume_number, stage, status } }) {
+  console.log({ cover_letter, isPublic, resume_number, stage, status })
   return (
     <Flex gap={1} justify='flex-end' >
-      {stage > 0 && <Chip>round {stage}</Chip>}
-      {cover_letter && <Chip>sent cover letter</Chip>}
-      <Chip>resume {resume_number}</Chip>
-      <Chip>#{category}</Chip>
+      {(stage > 0) && <StyledBadge colorScheme='orange'>{stages[stage].text}</StyledBadge>}
+      {cover_letter && <StyledBadge colorScheme='green'>sent cover letter</StyledBadge>}
+      <StyledBadge colorScheme='purple'>{`resume #${resume_number}`}</StyledBadge>
+      <StyledBadge>{isPublic ? 'public' : 'private'}</StyledBadge>
     </Flex>
   )
 }
 
-function Chip({ children }) {
+function StyledBadge({ colorScheme, children }) {
   return (
-    <Box
-      as='span'
-      px='1'
-      py='0'
-      rounded='lg'
-      bg={useColorModeValue('gray.200', 'gray.700')}
-      display='inline-flex'
-    >
-      <Text fontSize='xs'>{children}</Text>
-    </Box>
+    <Badge colorScheme={colorScheme} textTransform={'lowercase'}>{children}</Badge>
   )
 }

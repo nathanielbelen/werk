@@ -2,7 +2,7 @@ export default function parseISO8601(dateString) {
   const currentDate = new Date();
   const parsedDate = new Date(`${dateString}Z`);
 
-  const timeDifference = currentDate.getTime() - parsedDate.getTime();
+  const timeDifference = currentDate - parsedDate
 
   const secondsDifference = Math.floor(timeDifference / 1000);
   const minutesDifference = Math.floor(secondsDifference / 60);
