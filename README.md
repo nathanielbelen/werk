@@ -1,5 +1,6 @@
 ## werk
 Job Application Tracker
+[example user](https://werk-five.vercel.app/example)
 
 ## Overview
 Werk is a web application that allows users to record and manage their job applications in an organized and presentable manner. Users can add details about each job application, such as the company, position, resume used, cover letter status, and notes. The application then provides a comprehensive list of all the user's current applications along with their respective statuses. Additionally, the project aims to introduce a dashboard feature that will offer further insights and statistics, such as the percentage of applications that progressed through specific interview stages or the success rate of applications with cover letters.
