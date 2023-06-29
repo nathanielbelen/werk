@@ -70,13 +70,25 @@ export default function ApplicationForm({ application, submit, cancel }) {
           type='select'
           label='Stage'
           name='stage'
-          options={[1, 2, 3, 4, 5]}
+          options={{
+            0: { text: 'waiting on response' },
+            1: { text: 'phone screen' },
+            2: { text: 'round 1 interview' },
+            3: { text: 'round 2 interview' },
+            4: { text: 'round 3 interview' },
+            5: { text: 'round 4 interview' }
+          }}
           {...commonProps} />
         <ControlledFormField
           type='select'
           label='Status'
           name='status'
-          options={[1, 2, 3, 4, 5]}
+          options={{
+            '-2': { color: 'gray.100', text: 'assumed rejected' },
+            '-1': { color: 'gray.100', text: 'rejected' },
+            '0': { color: 'yellow.100', text: 'waiting on response' },
+            '1': { color: 'green.100', text: 'interviewing' }
+          }}
           {...commonProps} />
         <ControlledFormField type='input' label='Category' name='category' {...commonProps} />
         <Flex justifyContent={'center'} gap={'2'}>
@@ -95,9 +107,17 @@ const ControlledFormField = ({ label, name, formData, value, options, onChange, 
       <FormLabel mb={0}>{label}</FormLabel>
       {type === 'select' && (
         <Select name={name} value={formData[name]} onChange={onChange}>
-          {options.map((option, idx) =>
-            <option value={option} key={`${name}_option_${idx}`}>{option}</option>
-          )}
+          {Array.isArray(options)
+            ? options.map((option, idx) => (
+              <option value={option} key={`${name}_option_${idx}`}>
+                {option}
+              </option>
+            ))
+            : Object.entries(options).map(([value, { text }], idx) => (
+              <option value={value} key={`${name}_option_${idx}`}>
+                {text}
+              </option>
+            ))}
         </Select>
       )}
       {type === 'input' && (

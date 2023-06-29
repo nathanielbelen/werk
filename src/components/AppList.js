@@ -8,7 +8,7 @@ import Application from './Application'
 import AddApplication from './AddApplication'
 import ContentBox from './ContentBox';
 import DeleteDialog from './DeleteDialog';
-import { addApplicationToDatabase, deleteApplicationFromDatabase } from '@/util/queries';
+import { addApplicationToDatabase, deleteApplicationFromDatabase, editApplicationInDatabase } from '@/util/queries';
 import convertToSafeClassName from '@/util/convertToSafeClassName';
 
 export default function AppList({ userId, isUser }) {
@@ -48,6 +48,8 @@ export default function AppList({ userId, isUser }) {
     getApplications();
   }, []);
 
+  // useEffect(() => { console.log(applications) }, [applications])
+
   const setAppIdRef = (id) => {
     AppIdRef.current = id;
   }
@@ -80,7 +82,7 @@ export default function AppList({ userId, isUser }) {
     try {
       let { count, error } = await deleteApplicationFromDatabase(id, supabaseClient);
       if (error) throw new Error('Failed to delete application from the database.');
-      let newApplications = applications;
+      let newApplications = [ ...applications ];
       newApplications = newApplications.filter((app) => app.id !== id)
       setApplications(newApplications)
       toast({
@@ -99,6 +101,37 @@ export default function AppList({ userId, isUser }) {
     }
   };
 
+  const editApp = async (app, id) => {
+    try {
+      let { data, error } = await editApplicationInDatabase(app, id, supabaseClient);
+      console.log('received data', data)
+      if (error) {
+        console.log(error)
+      };
+      let newApplications = [... applications];
+      let applicationIndex = newApplications.findIndex(obj => obj.id === id);
+      if (applicationIndex !== -1) {
+        newApplications[applicationIndex] = data[0];
+      }
+      console.log('new app,', newApplications)
+      setApplications(newApplications)
+      toast({
+        title: 'Successfully edited application!',
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      });
+    } catch (error) {
+      console.log(error)
+      toast({
+        title: 'Encountered error editing application.',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      });
+    }
+  }
+
   if (isLoading) {
     return <Flex flexGrow={1} alignItems='center' justifyContent='center'><Spinner /></Flex>;
   }
@@ -115,7 +148,7 @@ export default function AppList({ userId, isUser }) {
           {isUser && <AddApplication addApp={addApp} />}
           <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>
             {applications.map((app, idx) =>
-              <Application isUser={isUser} data={app} key={`app_${convertToSafeClassName(app.company)}_${idx}`} onOpen={onOpen} setAppIdRef={setAppIdRef} />
+              <Application isUser={isUser} data={app} key={`app_${convertToSafeClassName(app.company)}_${idx}`} onOpen={onOpen} setAppIdRef={setAppIdRef} toast={toast} editApp={editApp} />
             )}
           </Accordion>
         </Box>

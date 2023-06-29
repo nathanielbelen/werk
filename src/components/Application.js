@@ -6,11 +6,11 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon, Menu, Button,
+  AccordionIcon, Menu, Button, Badge,
   MenuButton,
   MenuList,
   MenuItem,
-  Spinner
+  Spinner, List, ListItem, Kbd, Tooltip
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -19,7 +19,8 @@ import Chips from '@/components/Chips';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import ContentBox from './ContentBox';
-import AddApplicationForm from './AddApplicationForm';
+import ApplicationForm from './ApplicationForm';
+import parseISO8601 from '@/util/parseISO8601';
 
 const stages = {
   0: { text: 'waiting on response' },
@@ -37,38 +38,45 @@ const statuses = {
   '1': { color: 'green.100', text: 'interviewing' }
 }
 
-export default function Application({ data, isUser, onOpen, setAppIdRef }) {
-  const [shouldLoad, setShouldLoad] = useState(false);
-  const [applicationData, setApplicationData] = useState(null);
+export default function Application({ data, isUser, onOpen, setAppIdRef, editApp }) {
+  const [applicationHistory, setApplicationHistory] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const supabaseClient = useSupabaseClient();
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const handleAppDeleteClick = () => {
     setAppIdRef(id);
     onOpen();
   }
 
-  useEffect(() => {
-    async function getApplicationData() {
-      // setIsLoading(true);
-      // setError(null);
+  const handleEdit = (app) => {
+    editApp(app, data.id, supabaseClient)
+      .then(() => { setEditMode(false) })
+      .catch(() => { console.log(err) })
+  }
 
-      try {
-        let query = supabaseClient.from('application_changes').select().eq('application_id', id);
-        const { data, error } = await query;
-        if (error) {
-          throw new Error('Failed to fetch application data');
+  const handleAccordionClick = () => {
+    if (!isButtonClicked) {
+      setIsButtonClicked(true);
+      async function getApplicationData() {
+        try {
+          let query = supabaseClient.from('application_changes').select().eq('application_id', id).order('changed_at', { ascending: false });
+          const { data, error } = await query;
+          if (error) {
+            throw new Error('Failed to fetch application data');
+          }
+          setApplicationHistory(data);
+        } catch (error) {
+          // setError(error);
+        } finally {
+          // setShouldLoad(false);
         }
-        console.log(data)
-        setApplicationData(data);
-      } catch (error) {
-        // setError(error);
-      } finally {
-        // setIsLoading(false);
       }
+      if (applicationHistory === null) {
+        setTimeout(() => { getApplicationData() }, 3000)
+      };
     }
-    if (shouldLoad) getApplicationData();
-  }, [shouldLoad]);
+  };
 
   const {
     company,
@@ -87,10 +95,6 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
   } = data;
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleItemClick = () => {
-    setIsExpanded(!isExpanded)
-  }
-
   return (
     <AccordionItem
       borderRadius='lg'
@@ -108,7 +112,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
             bg: 'none',
           },
         }}
-        onClick={() => { setShouldLoad(true) }}
+        onClick={handleAccordionClick}
       >
         <Box display='flex' w={'100%'} alignItems='stretch'>
           <Box bg={statuses[status].color} width={12} />
@@ -158,10 +162,12 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
         </Box>
       </AccordionButton>
       <AccordionPanel pb={4}>
-        {!editMode && <Flex h={'300px'} flexDirection='column'>
+        {!editMode && <Flex h={'auto'} flexDirection='column'>
           <Flex flexGrow={1} mb={2}>
-            <ContentBox flexGrow={1} heading='History' headingSize={'xs'}>Box 1</ContentBox>
-            <ContentBox flexGrow={1} heading='Notes' headingSize={'xs'}>{notes}</ContentBox>
+            <ContentBox width={'50%'} heading='History' headingSize={'xs'}>
+              {applicationHistory === null ? <Spinner /> : <HistoryList list={applicationHistory} />}
+            </ContentBox>
+            <ContentBox width={'50%'} heading='Notes' headingSize={'xs'}>{notes}</ContentBox>
           </Flex>
           {isUser && <Menu>
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
@@ -171,7 +177,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
             </MenuList>
           </Menu>}
         </Flex>}
-        {editMode && <AddApplicationForm />}
+        {editMode && <ContentBox heading='Edit Application'><ApplicationForm application={data} submit={handleEdit} cancel={() => { setEditMode(false) }} /></ContentBox>}
       </AccordionPanel>
     </AccordionItem>
   )
@@ -205,4 +211,42 @@ const Note = ({ text }) => {
   const sanitizedHTML = DOMPurify.sanitize(parsedHTML);
 
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;
+};
+
+const HistoryList = ({ list }) => {
+
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+  };
+
+  return (
+    <List>
+      {list.map((item, idx) => {
+        let date = new Date(item.changed_at)
+        let fromValue, toValue;
+
+        if (item.column_name === 'status') {
+          fromValue = statuses[item.old_value].text;
+          toValue = statuses[item.new_value].text;
+        } else if (item.column_name === 'stage') {
+          fromValue = stages[item.old_value].text;
+          toValue = stages[item.new_value].text;
+        }
+        console.log(fromValue, toValue)
+        return (
+          <ListItem key={`${idx}_${item.id}`}>
+            <Tooltip label={date.toLocaleTimeString(undefined, options)}><Badge mr={1}>{parseISO8601(item.changed_at)}</Badge></Tooltip>
+            <Text as={'span'} fontSize={'sm'}>
+              <Kbd>{item.column_name}</Kbd> changed from <Kbd>{fromValue}</Kbd> to <Kbd>{toValue}</Kbd>.
+            </Text>
+          </ListItem>
+        );
+      })}
+    </List>
+  );
 };
