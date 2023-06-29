@@ -55,7 +55,6 @@ export default function AppList({ userId, isUser }) {
   }
 
   const deleteApp = async (id) => {
-    console.log('attempting to delete id...', id);
     async function deleteApplicationFromDatabase() {
       return supabaseClient
         .from('applications')
@@ -66,9 +65,6 @@ export default function AppList({ userId, isUser }) {
     try {
       let { count, error } = await deleteApplicationFromDatabase();
       if (error) throw new Error('Failed to delete application from the database.');
-
-      // delete from application array
-      console.log(`deleted ${count} row`)
       let newApplications = applications;
       newApplications = newApplications.filter((app) => app.id !== id)
       setApplications(newApplications)
@@ -131,7 +127,6 @@ const ApplicationListSummary = ({ applications }) => {
     };
 
     for (const application of applications) {
-      console.log('status', application.status)
       const { status } = application;
       statusCount[status.toString()]++;
     }
