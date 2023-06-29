@@ -1,6 +1,6 @@
 import {
   Box, Center, Heading, Accordion,
-  Spinner, Flex, useToast, useDisclosure
+  Spinner, Flex, useToast, useDisclosure, Select
 } from '@chakra-ui/react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react'
@@ -10,18 +10,19 @@ import ContentBox from './ContentBox';
 import DeleteDialog from './DeleteDialog';
 import { addApplicationToDatabase, deleteApplicationFromDatabase, editApplicationInDatabase } from '@/util/queries';
 import convertToSafeClassName from '@/util/convertToSafeClassName';
+import sortArray from '@/util/sortApplications';
 
 export default function AppList({ userId, isUser }) {
   const toast = useToast();
   const user = useUser();
   const supabaseClient = useSupabaseClient();
   const [applications, setApplications] = useState([]);
+  const [sortBy, setSortBy] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = useRef()
   const AppIdRef = useRef(null);
-
 
   useEffect(() => {
     async function getApplications() {
@@ -48,7 +49,12 @@ export default function AppList({ userId, isUser }) {
     getApplications();
   }, []);
 
-  // useEffect(() => { console.log(applications) }, [applications])
+  useEffect(() => {
+    if (sortBy > -1) {
+      setApplications(sortArray(sortBy, applications))
+    }
+  }, [sortBy])
+
 
   const setAppIdRef = (id) => {
     AppIdRef.current = id;
@@ -82,7 +88,7 @@ export default function AppList({ userId, isUser }) {
     try {
       let { count, error } = await deleteApplicationFromDatabase(id, supabaseClient);
       if (error) throw new Error('Failed to delete application from the database.');
-      let newApplications = [ ...applications ];
+      let newApplications = [...applications];
       newApplications = newApplications.filter((app) => app.id !== id)
       setApplications(newApplications)
       toast({
@@ -108,7 +114,7 @@ export default function AppList({ userId, isUser }) {
       if (error) {
         console.log(error)
       };
-      let newApplications = [... applications];
+      let newApplications = [...applications];
       let applicationIndex = newApplications.findIndex(obj => obj.id === id);
       if (applicationIndex !== -1) {
         newApplications[applicationIndex] = data[0];
@@ -144,6 +150,14 @@ export default function AppList({ userId, isUser }) {
     <>
       <ContentBox heading={'Applications'}>
         <ApplicationListSummary applications={applications} />
+        <Box py={2} display='flex' gap={2} alignItems={'center'}><Box>Sort by:</Box>
+          <Select placeholder='Select option' w='250px' onChange={(e) => { setSortBy(Number(e.target.value)) }}>
+            <option value='0'>date, descending</option>
+            <option value='1'>date, ascending</option>
+            <option value='2'>status, descending</option>
+            <option value='3'>status, ascending</option>
+          </Select>
+        </Box>
         <Box>
           {isUser && <AddApplication addApp={addApp} />}
           <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>

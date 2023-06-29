@@ -32,8 +32,8 @@ const stages = {
 }
 
 const statuses = {
-  '-2': { color: 'gray.100', text: 'assumed rejected' },
-  '-1': { color: 'gray.100', text: 'rejected' },
+  '-2': { color: 'gray.100', text: 'rejected' },
+  '-1': { color: 'gray.100', text: 'assumed rejected' },
   '0': { color: 'yellow.100', text: 'waiting on response' },
   '1': { color: 'green.100', text: 'interviewing' }
 }
@@ -72,9 +72,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef, editApp
           // setShouldLoad(false);
         }
       }
-      if (applicationHistory === null) {
-        setTimeout(() => { getApplicationData() }, 3000)
-      };
+      if (applicationHistory === null) getApplicationData();
     }
   };
 
@@ -122,7 +120,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef, editApp
                 <Text fontSize='xl'>
                   <b>{company}</b>
                 </Text>
-                <Text as='span' fontSize='lg'>
+                <Text as='span' fontSize='lg' mr={1}>
                   {position}
                 </Text>
                 {subtitle && <Text as='span' fontSize='xs' color='gray.400'>({subtitle})</Text>}
@@ -150,12 +148,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef, editApp
             </Flex>
             <Flex flexDirection='column' justifyContent='center' gap={1}>
               <StatusText status={status} stage={stage} />
-              <Chips
-                stage={stage}
-                cover_letter={cover_letter}
-                resume_number={resume_number}
-                category={category}
-              />
+              <Chips application={data} />
             </Flex>
             <AccordionIcon alignSelf={'center'} />
           </Flex>
@@ -167,7 +160,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef, editApp
             <ContentBox width={'50%'} heading='History' headingSize={'xs'}>
               {applicationHistory === null ? <Spinner /> : <HistoryList list={applicationHistory} createdAt={data.created_at} />}
             </ContentBox>
-            <ContentBox width={'50%'} heading='Notes' headingSize={'xs'}>{notes}</ContentBox>
+            <ContentBox width={'50%'} heading='Notes' headingSize={'xs'} whiteSpace={'pre-wrap'}>{notes}</ContentBox>
           </Flex>
           {isUser && <Menu>
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>

@@ -26,11 +26,11 @@ function NavigationLinks() {
           List
         </Text>
       </Link>
-      <Link as={NextLink} href='/data'>
+      {/* <Link as={NextLink} href='/data'>
         <Text fontWeight={300} fontSize='large' letterSpacing='1px'>
           Data
         </Text>
-      </Link>
+      </Link> */}
     </Stack>
   );
 }
