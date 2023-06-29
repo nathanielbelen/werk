@@ -12,7 +12,7 @@ export default function List() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <AppList user={user} />
+      <AppList user={user} isUser={true} />
     </>
   )
 }
