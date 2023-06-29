@@ -44,6 +44,10 @@ export default function Application({ data, isUser, onOpen, setAppIdRef, editApp
   const supabaseClient = useSupabaseClient();
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
+  useEffect(() => {
+    console.log('rerendered')
+  })
+
   const handleAppDeleteClick = () => {
     setAppIdRef(id);
     onOpen();
@@ -232,7 +236,7 @@ const HistoryList = ({ list, createdAt }) => {
           fromValue = stages[item.old_value].text;
           toValue = stages[item.new_value].text;
         }
-        console.log(item, 'item')
+
         return (
           <ListItem key={`${idx}_${item.id}`}>
             <Tooltip label={date.toLocaleTimeString(undefined, options)}><Badge mr={1}>{parseISO8601(item.changed_at)}</Badge></Tooltip>

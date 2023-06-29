@@ -110,7 +110,7 @@ export default function AppList({ userId, isUser }) {
   const editApp = async (app, id) => {
     try {
       let { data, error } = await editApplicationInDatabase(app, id, supabaseClient);
-      console.log('received data', data)
+
       if (error) {
         console.log(error)
       };
@@ -119,7 +119,7 @@ export default function AppList({ userId, isUser }) {
       if (applicationIndex !== -1) {
         newApplications[applicationIndex] = data[0];
       }
-      console.log('new app,', newApplications)
+
       setApplications(newApplications)
       toast({
         title: 'Successfully edited application!',

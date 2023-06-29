@@ -10,7 +10,7 @@ const stages = {
 }
 
 export default function Chips({ application: { cover_letter, public: isPublic, resume_number, stage, status } }) {
-  console.log({ cover_letter, isPublic, resume_number, stage, status })
+
   return (
     <Flex gap={1} justify='flex-end' >
       {(stage > 0) && <StyledBadge colorScheme='orange'>{stages[stage].text}</StyledBadge>}
