@@ -8,7 +8,7 @@ import AddApplicationForm from './AddApplicationForm'
 import { useState } from 'react';
 import { SmallAddIcon } from '@chakra-ui/icons'
 
-export default function AddApplication() {
+export default function AddApplication({ addApp }) {
   // company, position, url, subtitle, notes, cover_letter, resume_number, location, stage, status, category
   const [adding, setAdding] = useState(false);
   const responsiveBg = useColorModeValue('gray.50', 'blackAlpha.100')
@@ -35,7 +35,7 @@ export default function AddApplication() {
         color={responsiveColor}
       >
         <Box width='100%' p={10} mt={4}>
-          <AddApplicationForm handleStop={handleStop} />
+          <AddApplicationForm handleStop={handleStop} addApp={addApp} />
         </Box>
       </Flex>
     )

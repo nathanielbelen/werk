@@ -3,7 +3,7 @@ import AppList from '@/components/AppList';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 export default function List() {
-  useAuthRedirect('/login');
+  const { user } = useAuthRedirect('/login');
   return (
     <>
       <Head>
@@ -12,7 +12,7 @@ export default function List() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <AppList />
+      <AppList user={user} />
     </>
   )
 }

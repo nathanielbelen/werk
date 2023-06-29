@@ -35,11 +35,15 @@ const statuses = {
   '1': { color: 'green.100', text: 'interviewing' }
 }
 
-export default function Application({ data }) {
-
+export default function Application({ data, isUser, onOpen, setAppIdRef }) {
   const [shouldLoad, setShouldLoad] = useState(false)
   const [applicationData, setApplicationData] = useState(null);
   const supabaseClient = useSupabaseClient();
+
+  const handleAppDeleteClick = () => {
+    setAppIdRef(id);
+    onOpen();
+  }
 
   useEffect(() => {
     async function getApplicationData() {
@@ -47,15 +51,11 @@ export default function Application({ data }) {
       // setError(null);
 
       try {
-        console.log(id)
         let query = supabaseClient.from('application_changes').select().eq('application_id', id);
         const { data, error } = await query;
-        console.log(data, error)
         if (error) {
           throw new Error('Failed to fetch application data');
         }
-
-        console.log(data)
 
         setApplicationData(data);
       } catch (error) {
@@ -160,13 +160,13 @@ export default function Application({ data }) {
             <AccordionContent />
             hey
           </Box>
-          <Menu>
+          {isUser && <Menu>
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
             <MenuList>
               <MenuItem>Edit</MenuItem>
-              <MenuItem>Delete</MenuItem>
+              <MenuItem onClick={handleAppDeleteClick}>Delete</MenuItem>
             </MenuList>
-          </Menu>
+          </Menu>}
         </Flex>
 
         {notes}
@@ -199,7 +199,7 @@ function AccordionContent({ isLoading, error }) {
 }
 
 const Note = ({ text }) => {
-  const parsedHTML = marked.parse(text, {mangle: false, headerIds: false});
+  const parsedHTML = marked.parse(text, { mangle: false, headerIds: false });
   const sanitizedHTML = DOMPurify.sanitize(parsedHTML);
 
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;
