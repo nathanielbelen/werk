@@ -165,7 +165,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef, editApp
         {!editMode && <Flex h={'auto'} flexDirection='column'>
           <Flex flexGrow={1} mb={2}>
             <ContentBox width={'50%'} heading='History' headingSize={'xs'}>
-              {applicationHistory === null ? <Spinner /> : <HistoryList list={applicationHistory} />}
+              {applicationHistory === null ? <Spinner /> : <HistoryList list={applicationHistory} createdAt={data.created_at} />}
             </ContentBox>
             <ContentBox width={'50%'} heading='Notes' headingSize={'xs'}>{notes}</ContentBox>
           </Flex>
@@ -213,7 +213,7 @@ const Note = ({ text }) => {
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;
 };
 
-const HistoryList = ({ list }) => {
+const HistoryList = ({ list, createdAt }) => {
 
   const options = {
     year: 'numeric',
@@ -223,6 +223,8 @@ const HistoryList = ({ list }) => {
     minute: 'numeric',
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
   };
+
+  const timeCreated = new Date(`${createdAt}Z`)
 
   return (
     <List>
@@ -237,7 +239,7 @@ const HistoryList = ({ list }) => {
           fromValue = stages[item.old_value].text;
           toValue = stages[item.new_value].text;
         }
-        console.log(fromValue, toValue)
+        console.log(item, 'item')
         return (
           <ListItem key={`${idx}_${item.id}`}>
             <Tooltip label={date.toLocaleTimeString(undefined, options)}><Badge mr={1}>{parseISO8601(item.changed_at)}</Badge></Tooltip>
@@ -247,6 +249,13 @@ const HistoryList = ({ list }) => {
           </ListItem>
         );
       })}
+      <ListItem>
+        <Tooltip label={timeCreated.toLocaleTimeString(undefined, options)}><Badge mr={1}>{parseISO8601(timeCreated)}</Badge></Tooltip>
+        <Text as={'span'} fontSize={'sm'}>
+          <Kbd>application submitted.</Kbd>
+        </Text>
+      </ListItem>
     </List>
+
   );
 };
