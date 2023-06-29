@@ -6,11 +6,11 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon, Menu, Button,
+  AccordionIcon, Menu, Button, Badge,
   MenuButton,
   MenuList,
   MenuItem,
-  Spinner
+  Spinner, List, ListItem, Kbd, Tooltip
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -18,6 +18,9 @@ import { useState, useEffect } from 'react';
 import Chips from '@/components/Chips';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import ContentBox from './ContentBox';
+import ApplicationForm from './ApplicationForm';
+import parseISO8601 from '@/util/parseISO8601';
 
 const stages = {
   0: { text: 'waiting on response' },
@@ -29,43 +32,49 @@ const stages = {
 }
 
 const statuses = {
-  '-2': { color: 'gray.100', text: 'assumed rejected' },
-  '-1': { color: 'gray.100', text: 'rejected' },
+  '-2': { color: 'gray.100', text: 'rejected' },
+  '-1': { color: 'gray.100', text: 'assumed rejected' },
   '0': { color: 'yellow.100', text: 'waiting on response' },
   '1': { color: 'green.100', text: 'interviewing' }
 }
 
-export default function Application({ data, isUser, onOpen, setAppIdRef }) {
-  const [shouldLoad, setShouldLoad] = useState(false)
-  const [applicationData, setApplicationData] = useState(null);
+export default function Application({ data, isUser, onOpen, setAppIdRef, editApp }) {
+  const [applicationHistory, setApplicationHistory] = useState(null);
+  const [editMode, setEditMode] = useState(false);
   const supabaseClient = useSupabaseClient();
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const handleAppDeleteClick = () => {
     setAppIdRef(id);
     onOpen();
   }
 
-  useEffect(() => {
-    async function getApplicationData() {
-      // setIsLoading(true);
-      // setError(null);
+  const handleEdit = (app) => {
+    editApp(app, data.id, supabaseClient)
+      .then(() => { setEditMode(false) })
+      .catch(() => { console.log(err) })
+  }
 
-      try {
-        let query = supabaseClient.from('application_changes').select().eq('application_id', id);
-        const { data, error } = await query;
-        if (error) {
-          throw new Error('Failed to fetch application data');
+  const handleAccordionClick = () => {
+    if (!isButtonClicked) {
+      setIsButtonClicked(true);
+      async function getApplicationData() {
+        try {
+          let query = supabaseClient.from('application_changes').select().eq('application_id', id).order('changed_at', { ascending: false });
+          const { data, error } = await query;
+          if (error) {
+            throw new Error('Failed to fetch application data');
+          }
+          setApplicationHistory(data);
+        } catch (error) {
+          // setError(error);
+        } finally {
+          // setShouldLoad(false);
         }
-
-        setApplicationData(data);
-      } catch (error) {
-        // setError(error);
-      } finally {
-        // setIsLoading(false);
       }
+      if (applicationHistory === null) getApplicationData();
     }
-    if (shouldLoad) getApplicationData();
-  }, [shouldLoad]);
+  };
 
   const {
     company,
@@ -84,10 +93,6 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
   } = data;
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleItemClick = () => {
-    setIsExpanded(!isExpanded)
-  }
-
   return (
     <AccordionItem
       borderRadius='lg'
@@ -105,7 +110,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
             bg: 'none',
           },
         }}
-        onClick={() => { setShouldLoad(true) }}
+        onClick={handleAccordionClick}
       >
         <Box display='flex' w={'100%'} alignItems='stretch'>
           <Box bg={statuses[status].color} width={12} />
@@ -115,7 +120,7 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
                 <Text fontSize='xl'>
                   <b>{company}</b>
                 </Text>
-                <Text as='span' fontSize='lg'>
+                <Text as='span' fontSize='lg' mr={1}>
                   {position}
                 </Text>
                 {subtitle && <Text as='span' fontSize='xs' color='gray.400'>({subtitle})</Text>}
@@ -143,33 +148,29 @@ export default function Application({ data, isUser, onOpen, setAppIdRef }) {
             </Flex>
             <Flex flexDirection='column' justifyContent='center' gap={1}>
               <StatusText status={status} stage={stage} />
-              <Chips
-                stage={stage}
-                cover_letter={cover_letter}
-                resume_number={resume_number}
-                category={category}
-              />
+              <Chips application={data} />
             </Flex>
             <AccordionIcon alignSelf={'center'} />
           </Flex>
         </Box>
       </AccordionButton>
       <AccordionPanel pb={4}>
-        <Flex h={'300px'} flexDirection='column'>
-          <Box flexGrow={1}>
-            <AccordionContent />
-            hey
-          </Box>
+        {!editMode && <Flex h={'auto'} flexDirection='column'>
+          <Flex flexGrow={1} mb={2}>
+            <ContentBox width={'50%'} heading='History' headingSize={'xs'}>
+              {applicationHistory === null ? <Spinner /> : <HistoryList list={applicationHistory} createdAt={data.created_at} />}
+            </ContentBox>
+            <ContentBox width={'50%'} heading='Notes' headingSize={'xs'} whiteSpace={'pre-wrap'}>{notes}</ContentBox>
+          </Flex>
           {isUser && <Menu>
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
             <MenuList>
-              <MenuItem>Edit</MenuItem>
+              <MenuItem onClick={() => { setEditMode(!editMode) }}>Edit</MenuItem>
               <MenuItem onClick={handleAppDeleteClick}>Delete</MenuItem>
             </MenuList>
           </Menu>}
-        </Flex>
-
-        {notes}
+        </Flex>}
+        {editMode && <ContentBox heading='Edit Application'><ApplicationForm application={data} submit={handleEdit} cancel={() => { setEditMode(false) }} /></ContentBox>}
       </AccordionPanel>
     </AccordionItem>
   )
@@ -203,4 +204,51 @@ const Note = ({ text }) => {
   const sanitizedHTML = DOMPurify.sanitize(parsedHTML);
 
   return <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />;
+};
+
+const HistoryList = ({ list, createdAt }) => {
+
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+  };
+
+  const timeCreated = new Date(`${createdAt}Z`)
+
+  return (
+    <List>
+      {list.map((item, idx) => {
+        let date = new Date(item.changed_at)
+        let fromValue, toValue;
+
+        if (item.column_name === 'status') {
+          fromValue = statuses[item.old_value].text;
+          toValue = statuses[item.new_value].text;
+        } else if (item.column_name === 'stage') {
+          fromValue = stages[item.old_value].text;
+          toValue = stages[item.new_value].text;
+        }
+        console.log(item, 'item')
+        return (
+          <ListItem key={`${idx}_${item.id}`}>
+            <Tooltip label={date.toLocaleTimeString(undefined, options)}><Badge mr={1}>{parseISO8601(item.changed_at)}</Badge></Tooltip>
+            <Text as={'span'} fontSize={'sm'}>
+              <Kbd>{item.column_name}</Kbd> changed from <Kbd>{fromValue}</Kbd> to <Kbd>{toValue}</Kbd>.
+            </Text>
+          </ListItem>
+        );
+      })}
+      <ListItem>
+        <Tooltip label={timeCreated.toLocaleTimeString(undefined, options)}><Badge mr={1}>{parseISO8601(timeCreated)}</Badge></Tooltip>
+        <Text as={'span'} fontSize={'sm'}>
+          <Kbd>application submitted.</Kbd>
+        </Text>
+      </ListItem>
+    </List>
+
+  );
 };

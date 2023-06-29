@@ -1,25 +1,28 @@
 import {
   Box, Center, Heading, Accordion,
-  Spinner, Flex, useToast, useDisclosure
+  Spinner, Flex, useToast, useDisclosure, Select
 } from '@chakra-ui/react';
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react'
 import Application from './Application'
 import AddApplication from './AddApplication'
 import ContentBox from './ContentBox';
 import DeleteDialog from './DeleteDialog';
+import { addApplicationToDatabase, deleteApplicationFromDatabase, editApplicationInDatabase } from '@/util/queries';
 import convertToSafeClassName from '@/util/convertToSafeClassName';
+import sortArray from '@/util/sortApplications';
 
 export default function AppList({ userId, isUser }) {
   const toast = useToast();
+  const user = useUser();
   const supabaseClient = useSupabaseClient();
   const [applications, setApplications] = useState([]);
+  const [sortBy, setSortBy] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = useRef()
   const AppIdRef = useRef(null);
-
 
   useEffect(() => {
     async function getApplications() {
@@ -46,40 +49,93 @@ export default function AppList({ userId, isUser }) {
     getApplications();
   }, []);
 
+  useEffect(() => {
+    if (sortBy > -1) {
+      setApplications(sortArray(sortBy, applications))
+    }
+  }, [sortBy])
+
+
   const setAppIdRef = (id) => {
     AppIdRef.current = id;
   }
 
-  const addApp = (app) => {
-    setApplications([app, ...applications])
+  const addApp = async (app) => {
+    try {
+      let { data, error } = await addApplicationToDatabase({ user_id: user.id, ...app }, supabaseClient);
+      if (error) {
+        console.log(error)
+        throw new Error('Failed to add application to the database.')
+      };
+      toast({
+        title: 'Successfully added application!',
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      });
+      setApplications([data[0], ...applications]);
+    } catch (error) {
+      toast({
+        title: 'Encountered error adding application.',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      });
+    }
   }
 
   const deleteApp = async (id) => {
-    console.log('attempting to delete id...', id);
-    async function deleteApplicationFromDatabase() {
-      return supabaseClient
-        .from('applications')
-        .delete({ count: 'estimated' })
-        .eq('id', id);
-    }
-
     try {
-      let { count, error } = await deleteApplicationFromDatabase();
+      let { count, error } = await deleteApplicationFromDatabase(id, supabaseClient);
       if (error) throw new Error('Failed to delete application from the database.');
-
-      // delete from application array
-      console.log(`deleted ${count} row`)
-      let newApplications = applications;
+      let newApplications = [...applications];
       newApplications = newApplications.filter((app) => app.id !== id)
       setApplications(newApplications)
-      // display successful toast
+      toast({
+        title: 'Successfully deleted application!',
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      });
     } catch (error) {
-      // display fail toast with error
+      toast({
+        title: 'Encountered error deleting application.',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      });
     }
   };
 
-  const deleteCurrentAppByRef = () => {
-    deleteApp(AppIdRef.current)
+  const editApp = async (app, id) => {
+    try {
+      let { data, error } = await editApplicationInDatabase(app, id, supabaseClient);
+      console.log('received data', data)
+      if (error) {
+        console.log(error)
+      };
+      let newApplications = [...applications];
+      let applicationIndex = newApplications.findIndex(obj => obj.id === id);
+      if (applicationIndex !== -1) {
+        newApplications[applicationIndex] = data[0];
+      }
+      console.log('new app,', newApplications)
+      setApplications(newApplications)
+      toast({
+        title: 'Successfully edited application!',
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      });
+    } catch (error) {
+      console.log(error)
+      toast({
+        title: 'Encountered error editing application.',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      });
+    }
   }
 
   if (isLoading) {
@@ -94,16 +150,24 @@ export default function AppList({ userId, isUser }) {
     <>
       <ContentBox heading={'Applications'}>
         <ApplicationListSummary applications={applications} />
+        <Box py={2} display='flex' gap={2} alignItems={'center'}><Box>Sort by:</Box>
+          <Select placeholder='Select option' w='250px' onChange={(e) => { setSortBy(Number(e.target.value)) }}>
+            <option value='0'>date, descending</option>
+            <option value='1'>date, ascending</option>
+            <option value='2'>status, descending</option>
+            <option value='3'>status, ascending</option>
+          </Select>
+        </Box>
         <Box>
           {isUser && <AddApplication addApp={addApp} />}
           <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>
             {applications.map((app, idx) =>
-              <Application isUser={isUser} data={app} key={`app_${convertToSafeClassName(app.company)}_${idx}`} toast={toast} onOpen={onOpen} setAppIdRef={setAppIdRef} />
+              <Application isUser={isUser} data={app} key={`app_${convertToSafeClassName(app.company)}_${idx}`} onOpen={onOpen} setAppIdRef={setAppIdRef} toast={toast} editApp={editApp} />
             )}
           </Accordion>
         </Box>
       </ContentBox>
-      <DeleteDialog isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} deleteApp={deleteCurrentAppByRef} />
+      <DeleteDialog isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} deleteApp={() => { deleteApp(AppIdRef.current) }} />
     </>
   )
 }
@@ -131,7 +195,6 @@ const ApplicationListSummary = ({ applications }) => {
     };
 
     for (const application of applications) {
-      console.log('status', application.status)
       const { status } = application;
       statusCount[status.toString()]++;
     }

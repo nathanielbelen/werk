@@ -32,7 +32,7 @@ function HeroSection() {
         </Text>
       </Heading>
       <Text color={'gray.500'}>
-        You can manage all your job applications in one place. Werk empowers you with insightful data visualizations, helping you understand what strategies work best. Discover the impact of your job search habits, and optimize your job search like never before.
+        You can manage all your job applications in one place. <s>Werk empowers you with insightful data visualizations, helping you understand what strategies work best. Discover the impact of your job search habits, and optimize your job search like never before.</s>
       </Text>
       <Stack
         direction={'column'}
@@ -54,9 +54,9 @@ function HeroSection() {
         >
           Get Started
         </Button>
-        <Button variant={'link'} colorScheme={'blue'} size={'sm'}>
+        {/* <Button variant={'link'} colorScheme={'blue'} size={'sm'}>
           Learn more
-        </Button>
+        </Button> */}
       </Stack>
     </Stack>
   );

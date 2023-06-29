@@ -4,7 +4,7 @@ import {
   Button,
   useColorModeValue
 } from '@chakra-ui/react';
-import AddApplicationForm from './AddApplicationForm'
+import ApplicationForm from './ApplicationForm'
 import { useState } from 'react';
 import { SmallAddIcon } from '@chakra-ui/icons'
 
@@ -14,6 +14,13 @@ export default function AddApplication({ addApp }) {
   const responsiveBg = useColorModeValue('gray.50', 'blackAlpha.100')
   const responsiveColor = useColorModeValue('gray.800', 'white')
   const responsiveBorderColor = useColorModeValue('gray.200', 'white.300')
+  const handleSubmit = (app) => {
+    addApp(app)
+      .then(() => {
+        setAdding(false)
+      })
+  }
+
   const handleStop = () => {
     setAdding(false);
   }
@@ -35,7 +42,7 @@ export default function AddApplication({ addApp }) {
         color={responsiveColor}
       >
         <Box width='100%' p={10} mt={4}>
-          <AddApplicationForm handleStop={handleStop} addApp={addApp} />
+          <ApplicationForm cancel={handleStop} submit={handleSubmit} />
         </Box>
       </Flex>
     )
