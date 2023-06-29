@@ -10,7 +10,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Spinner, List, ListItem, Kbd, Code
+  Spinner, List, ListItem, Kbd, Tooltip
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -214,12 +214,21 @@ const Note = ({ text }) => {
 };
 
 const HistoryList = ({ list }) => {
+
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+  };
+
   return (
     <List>
       {list.map((item, idx) => {
-        console.log(item);
-        let fromValue = item.changed_at;
-        let toValue = item.changed_at;
+        let date = new Date(item.changed_at)
+        let fromValue, toValue;
 
         if (item.column_name === 'status') {
           fromValue = statuses[item.old_value].text;
@@ -231,7 +240,7 @@ const HistoryList = ({ list }) => {
         console.log(fromValue, toValue)
         return (
           <ListItem key={`${idx}_${item.id}`}>
-            <Badge mr={1}>{parseISO8601(item.changed_at)}</Badge>
+            <Tooltip label={date.toLocaleTimeString(undefined, options)}><Badge mr={1}>{parseISO8601(item.changed_at)}</Badge></Tooltip>
             <Text as={'span'} fontSize={'sm'}>
               <Kbd>{item.column_name}</Kbd> changed from <Kbd>{fromValue}</Kbd> to <Kbd>{toValue}</Kbd>.
             </Text>
