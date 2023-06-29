@@ -8,6 +8,7 @@ import Application from './Application'
 import AddApplication from './AddApplication'
 import ContentBox from './ContentBox';
 import DeleteDialog from './DeleteDialog';
+import convertToSafeClassName from '@/util/convertToSafeClassName';
 
 export default function AppList({ userId, isUser }) {
   const toast = useToast();
@@ -53,19 +54,29 @@ export default function AppList({ userId, isUser }) {
     setApplications([app, ...applications])
   }
 
-  const deleteApp = (id) => {
-    console.log('attempting to delete id...', id)
+  const deleteApp = async (id) => {
+    console.log('attempting to delete id...', id);
     async function deleteApplicationFromDatabase() {
-      let { count, error } = await supabaseClient
+      return supabaseClient
         .from('applications')
-        .delete({ count: 'estimated'})
+        .delete({ count: 'estimated' })
         .eq('id', id);
-      console.log(count, error);
     }
-    deleteApplicationFromDatabase();
-    // handle successful
-    // handle error
-  }
+
+    try {
+      let { count, error } = await deleteApplicationFromDatabase();
+      if (error) throw new Error('Failed to delete application from the database.');
+
+      // delete from application array
+      console.log(`deleted ${count} row`)
+      let newApplications = applications;
+      newApplications = newApplications.filter((app) => app.id !== id)
+      setApplications(newApplications)
+      // display successful toast
+    } catch (error) {
+      // display fail toast with error
+    }
+  };
 
   const deleteCurrentAppByRef = () => {
     deleteApp(AppIdRef.current)
@@ -87,7 +98,7 @@ export default function AppList({ userId, isUser }) {
           {isUser && <AddApplication addApp={addApp} />}
           <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>
             {applications.map((app, idx) =>
-              <Application isUser={isUser} data={app} key={'Application-' + idx} toast={toast} onOpen={onOpen} setAppIdRef={setAppIdRef} />
+              <Application isUser={isUser} data={app} key={`app_${convertToSafeClassName(app.company)}_${idx}`} toast={toast} onOpen={onOpen} setAppIdRef={setAppIdRef} />
             )}
           </Accordion>
         </Box>
