@@ -1,15 +1,9 @@
 import {
   Box, Center, Heading, Accordion,
-  Spinner, Flex, useToast, AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogCloseButton, Button, useDisclosure
+  Spinner, Flex, useToast, useDisclosure
 } from '@chakra-ui/react';
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import Application from './Application'
 import AddApplication from './AddApplication'
 import ContentBox from './ContentBox';
@@ -18,11 +12,13 @@ import DeleteDialog from './DeleteDialog';
 export default function AppList({ userId, isUser }) {
   const toast = useToast();
   const supabaseClient = useSupabaseClient();
-  const [Applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = useRef()
+  const AppIdRef = useRef(null);
+
 
   useEffect(() => {
     async function getApplications() {
@@ -49,28 +45,30 @@ export default function AppList({ userId, isUser }) {
     getApplications();
   }, []);
 
-  const statusTally = useMemo(() => {
-    const statusCount = {
-      '-1': 0,
-      '0': 0,
-      '1': 0,
-    };
-
-    for (const Application of Applications) {
-      console.log(Application.status)
-      const { status } = Application;
-      statusCount[status.toString()]++;
-    }
-
-    return statusCount;
-  }, [Applications]);
-
-  const addApp = (app) => {
-    setApplications([app, ...Applications])
+  const setAppIdRef = (id) => {
+    AppIdRef.current = id;
   }
 
-  const deleteApp = () => {
+  const addApp = (app) => {
+    setApplications([app, ...applications])
+  }
 
+  const deleteApp = (id) => {
+    console.log('attempting to delete id...', id)
+    async function deleteApplicationFromDatabase() {
+      let { count, error } = await supabaseClient
+        .from('applications')
+        .delete({ count: 'estimated'})
+        .eq('id', id);
+      console.log(count, error);
+    }
+    deleteApplicationFromDatabase();
+    // handle successful
+    // handle error
+  }
+
+  const deleteCurrentAppByRef = () => {
+    deleteApp(AppIdRef.current)
   }
 
   if (isLoading) {
@@ -84,27 +82,17 @@ export default function AppList({ userId, isUser }) {
   return (
     <>
       <ContentBox heading={'Applications'}>
-        <Box pb={'5'}>
-          <Center>
-            <Heading
-              fontWeight={600}
-              fontSize={{ base: 'xl', sm: '3xl', md: '5xl' }}
-              lineHeight={'110%'}
-              align='center'
-            >Showing <Highlight color='gray.100'>{Applications.length}</Highlight> Applications. <Highlight color='yellow.100'>{statusTally['0']}</Highlight> waiting on responses, <Highlight color='red.100'>{statusTally['-1']}</Highlight> rejections, and <Highlight color='green.100'>{statusTally['1']}</Highlight> in the interview stage.</Heading>
-          </Center>
-        </Box>
-
+        <ApplicationListSummary applications={applications} />
         <Box>
           {isUser && <AddApplication addApp={addApp} />}
           <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>
-            {Applications.map((app, idx) =>
-              <Application isUser={isUser} data={app} key={'Application-no-' + idx} toast={toast} onOpen={onOpen} />
+            {applications.map((app, idx) =>
+              <Application isUser={isUser} data={app} key={'Application-' + idx} toast={toast} onOpen={onOpen} setAppIdRef={setAppIdRef} />
             )}
           </Accordion>
         </Box>
       </ContentBox>
-      <DeleteDialog isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} />
+      <DeleteDialog isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} deleteApp={deleteCurrentAppByRef} />
     </>
   )
 }
@@ -121,4 +109,33 @@ function Highlight({ color, children }) {
       {children}
     </Box>
   )
+}
+
+const ApplicationListSummary = ({ applications }) => {
+  const statusTally = useMemo(() => {
+    const statusCount = {
+      '-1': 0,
+      '0': 0,
+      '1': 0,
+    };
+
+    for (const application of applications) {
+      console.log('status', application.status)
+      const { status } = application;
+      statusCount[status.toString()]++;
+    }
+
+    return statusCount;
+  }, [applications]);
+
+  return (<Box pb={'5'}>
+    <Center>
+      <Heading
+        fontWeight={600}
+        fontSize={{ base: 'xl', sm: '3xl', md: '5xl' }}
+        lineHeight={'110%'}
+        align='center'
+      >Showing <Highlight color='gray.100'>{applications.length}</Highlight> applications. <Highlight color='yellow.100'>{statusTally['0']}</Highlight> waiting on responses, <Highlight color='red.100'>{statusTally['-1']}</Highlight> rejections, and <Highlight color='green.100'>{statusTally['1']}</Highlight> in the interview stage.</Heading>
+    </Center>
+  </Box>)
 }

@@ -118,8 +118,8 @@ export default function AddApplicationForm({ handleStop, application, addApp }) 
           {...commonProps} />
         <ControlledFormField type='input' label='Category' name='category' {...commonProps} />
         <Flex justifyContent={'center'} gap={'2'}>
-          <Button type='submit' variant='solid'>Submit</Button>
           <Button variant='outline' onClick={handleStop}>Cancel</Button>
+          <Button type='submit' variant='solid'>Submit</Button>
         </Flex>
       </form>
       <Flex flexGrow={1} alignItems='center' justifyContent='center'></Flex>

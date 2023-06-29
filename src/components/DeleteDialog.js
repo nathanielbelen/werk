@@ -9,9 +9,10 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
-function DeleteDialog({ isOpen, cancelRef, onClose }) {
+function DeleteDialog({ isOpen, cancelRef, onClose, deleteApp }) {
 
-  const handleClick = () => {
+  const handleConfirmDeleteClick = () => {
+    deleteApp();
     onClose();
   }
   return (<AlertDialog
@@ -32,7 +33,7 @@ function DeleteDialog({ isOpen, cancelRef, onClose }) {
           <Button ref={cancelRef} onClick={onClose}>
             Cancel
           </Button>
-          <Button colorScheme='red' onClick={handleClick} ml={3}>
+          <Button colorScheme='red' onClick={handleConfirmDeleteClick} ml={3}>
             Delete
           </Button>
         </AlertDialogFooter>

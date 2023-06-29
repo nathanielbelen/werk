@@ -35,11 +35,15 @@ const statuses = {
   '1': { color: 'green.100', text: 'interviewing' }
 }
 
-export default function Application({ data, isUser, onOpen }) {
-
+export default function Application({ data, isUser, onOpen, setAppIdRef }) {
   const [shouldLoad, setShouldLoad] = useState(false)
   const [applicationData, setApplicationData] = useState(null);
   const supabaseClient = useSupabaseClient();
+
+  const handleAppDeleteClick = () => {
+    setAppIdRef(id);
+    onOpen();
+  }
 
   useEffect(() => {
     async function getApplicationData() {
@@ -47,15 +51,11 @@ export default function Application({ data, isUser, onOpen }) {
       // setError(null);
 
       try {
-        console.log(id)
         let query = supabaseClient.from('application_changes').select().eq('application_id', id);
         const { data, error } = await query;
-        console.log(data, error)
         if (error) {
           throw new Error('Failed to fetch application data');
         }
-
-        console.log(data)
 
         setApplicationData(data);
       } catch (error) {
@@ -164,7 +164,7 @@ export default function Application({ data, isUser, onOpen }) {
             <MenuButton w='150px' as={Button} rightIcon={<ChevronDownIcon />} alignSelf={'flex-end'}>Actions</MenuButton>
             <MenuList>
               <MenuItem>Edit</MenuItem>
-              <MenuItem onClick={onOpen}>Delete</MenuItem>
+              <MenuItem onClick={handleAppDeleteClick}>Delete</MenuItem>
             </MenuList>
           </Menu>}
         </Flex>
