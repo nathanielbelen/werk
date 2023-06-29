@@ -3,15 +3,17 @@ import {
   Spinner, Flex, useToast, useDisclosure
 } from '@chakra-ui/react';
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react'
 import Application from './Application'
 import AddApplication from './AddApplication'
 import ContentBox from './ContentBox';
 import DeleteDialog from './DeleteDialog';
+import { addApplicationToDatabase, deleteApplicationFromDatabase } from '@/util/queries';
 import convertToSafeClassName from '@/util/convertToSafeClassName';
 
 export default function AppList({ userId, isUser }) {
   const toast = useToast();
+  const user = useUser();
   const supabaseClient = useSupabaseClient();
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,33 +52,52 @@ export default function AppList({ userId, isUser }) {
     AppIdRef.current = id;
   }
 
-  const addApp = (app) => {
-    setApplications([app, ...applications])
+  const addApp = async (app) => {
+    try {
+      let { data, error } = await addApplicationToDatabase({ user_id: user.id, ...app }, supabaseClient);
+      if (error) {
+        console.log(error)
+        throw new Error('Failed to add application to the database.')
+      };
+      toast({
+        title: 'Successfully added application!',
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      });
+      setApplications([data[0], ...applications]);
+    } catch (error) {
+      toast({
+        title: 'Encountered error adding application.',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      });
+    }
   }
 
   const deleteApp = async (id) => {
-    async function deleteApplicationFromDatabase() {
-      return supabaseClient
-        .from('applications')
-        .delete({ count: 'estimated' })
-        .eq('id', id);
-    }
-
     try {
-      let { count, error } = await deleteApplicationFromDatabase();
+      let { count, error } = await deleteApplicationFromDatabase(id, supabaseClient);
       if (error) throw new Error('Failed to delete application from the database.');
       let newApplications = applications;
       newApplications = newApplications.filter((app) => app.id !== id)
       setApplications(newApplications)
-      // display successful toast
+      toast({
+        title: 'Successfully deleted application!',
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      });
     } catch (error) {
-      // display fail toast with error
+      toast({
+        title: 'Encountered error deleting application.',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      });
     }
   };
-
-  const deleteCurrentAppByRef = () => {
-    deleteApp(AppIdRef.current)
-  }
 
   if (isLoading) {
     return <Flex flexGrow={1} alignItems='center' justifyContent='center'><Spinner /></Flex>;
@@ -94,12 +115,12 @@ export default function AppList({ userId, isUser }) {
           {isUser && <AddApplication addApp={addApp} />}
           <Accordion allowMultiple size='xl' variant='custom' spacing={'5'}>
             {applications.map((app, idx) =>
-              <Application isUser={isUser} data={app} key={`app_${convertToSafeClassName(app.company)}_${idx}`} toast={toast} onOpen={onOpen} setAppIdRef={setAppIdRef} />
+              <Application isUser={isUser} data={app} key={`app_${convertToSafeClassName(app.company)}_${idx}`} onOpen={onOpen} setAppIdRef={setAppIdRef} />
             )}
           </Accordion>
         </Box>
       </ContentBox>
-      <DeleteDialog isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} deleteApp={deleteCurrentAppByRef} />
+      <DeleteDialog isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} deleteApp={() => { deleteApp(AppIdRef.current) }} />
     </>
   )
 }
