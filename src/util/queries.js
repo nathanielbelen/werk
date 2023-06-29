@@ -1,5 +1,4 @@
 async function deleteApplicationFromDatabase(id, supabaseClient) {
-  console.log('is this firing')
   return supabaseClient
     .from('applications')
     .delete({ count: 'estimated' })
@@ -9,7 +8,17 @@ async function deleteApplicationFromDatabase(id, supabaseClient) {
 async function addApplicationToDatabase(app, supabaseClient) {
   return supabaseClient
     .from('applications')
-    .insert(app).select()
+    .insert(app)
+    .select()
 }
 
-export { deleteApplicationFromDatabase, addApplicationToDatabase };
+async function editApplicationInDatabase(app, id, supabaseClient) {
+  return supabaseClient
+    .from('applications')
+    .update(app)
+    .eq('id', id)
+    .select()
+}
+
+
+export { deleteApplicationFromDatabase, addApplicationToDatabase, editApplicationInDatabase };
